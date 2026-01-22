@@ -1,5 +1,3 @@
 # Expense-tracker-app
-This app will help you track your expenses
-
-this will be using tkinter in python
-along with sqlite3 for the database
+This app will help you track and manage your expenses.
+This will app be using tkinter to make the UI and will be using along with sqlite3 for handling the database.
