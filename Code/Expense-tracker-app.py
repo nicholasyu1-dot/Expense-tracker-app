@@ -1,5 +1,10 @@
+import tkinter
+from cProfile import label
 from tkinter import *
 from tkinter import ttk
+
+from pywin.dialogs.ideoptions import buttonControlMap
+
 
 class App(Tk):
     def __init__(self):
@@ -13,6 +18,22 @@ class App(Tk):
         self.create_layout()
         
         self.bind("<Escape>", self.toggle_fullscreen)
+
+    def add_expenses(self):
+        add_expenses_window = Toplevel(self)
+        add_expenses_window.title("Add an expense")
+        add_expenses_window.geometry(f"1000x700+{self.winfo_screenwidth() // 2 - 1000 // 2}+{self.winfo_screenheight()//2 - 700//2}")
+        add_expenses_window.focus_force()
+        add_expenses_window.grab_set()
+
+        Amount  = ttk.Label(text = "Amount spend")
+        date = ttk.Label(text = "Select a date")
+
+        type_of_expense = ttk.Label(text = "Select a type")
+        Amount_entry = ttk.Entry()
+        ttk.button
+        ttk.optionMenu
+
 
     def toggle_fullscreen(self, event=None):
         self.is_fullscreen = not self.is_fullscreen
@@ -62,7 +83,7 @@ class App(Tk):
         self.left_frame = Frame(self.container, bg="#3a546e")
         self.left_frame.pack(side=LEFT, fill=BOTH, expand=True)  
         
-        self.add_expense_btn = ttk.Button(self.left_frame, text="+ Add Expense")
+        self.add_expense_btn = ttk.Button(self.left_frame, text="+ Add Expense",command = self.add_expenses)
         self.add_expense_btn.pack(anchor="w", pady=10)  
         
         self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses")
