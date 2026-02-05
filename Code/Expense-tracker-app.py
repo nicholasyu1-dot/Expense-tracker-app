@@ -1,74 +1,105 @@
 from tkinter import *
 from tkinter import ttk
 
-
 class App(Tk):
     def __init__(self):
         super().__init__()
-        self.create_main_menu()
         self.title("Expense-tracker")
-        self.attributes('-fullscreen',True)
-        self.setup_buttons()
-        self.show_main_menu()
+        self.is_fullscreen = True
+        self.attributes('-fullscreen', True)
+        self.configure(bg="#2c3e50")
+        
+        self.setup_styles()
+        self.create_layout()
+        
+        self.bind("<Escape>", self.toggle_fullscreen)
 
+    def toggle_fullscreen(self, event=None):
+        self.is_fullscreen = not self.is_fullscreen
+        self.attributes('-fullscreen', self.is_fullscreen)
+        if not self.is_fullscreen:
+            self.geometry("1920x1000")  
 
-    def create_main_menu(self):
-        self.Main_menu_title = ttk.Label(self, text = "MAIN MENU")
-        self.Main_menu_title.config(font=("Arial", 30))
+    def setup_styles(self):
+        style = ttk.Style()
+        style.theme_use('clam')
+        
+        style.configure(
+            "Title.TLabel",
+            font=("Arial", 32, "bold"),
+            foreground="#ecf0f1",
+            background="#2c3e50"
+        )
+        style.configure(
+            "Heading.TLabel",
+            font=("Arial", 18, "bold"),
+            foreground="#ecf0f1",
+            background="#34495e"
+        )
+        style.configure(
+            "TButton",
+            font=("Arial", 12),
+            padding=(15, 10),
+            
+        )
+        style.configure(
+            "Left.TFrame",
+            background="#2c3e50"
+        )
+        style.configure(
+            "Right.TFrame",
+            background="#34495e"
+        )
 
-
-    def setup_buttons(self):
-        self.settings_button = ttk.Button(self, text = "Settings",command = self.settings_menu)
-
-    def settings_menu(self):
-        self.hide_main_menu()
-        self.settings_title = ttk.Label(self, text = "SETTINGS")
-        self.settings_title.config(font = ("Arial",60))
-        self.Setting_1 = self.create_label( text = "Setting_1")
-        self.Setting_2 = self.create_label( text = "Setting_2")
-        self.Setting_3 = self.create_label( text = "Setting_3")
-        self.Setting_4 = self.create_label( text = "Setting_4")
-        self.Setting_5 = self.create_label( text = "Setting_5")
-
-        self.Setting_1.grid(row=1,column = 0)
-        self.Setting_2.grid(row=2,column = 0)
-        self.Setting_3.grid(row=3,column = 0)
-        self.Setting_4.grid(row=4,column = 0)
-        self.Setting_5.grid(row=5,column = 0)
-        self.settings_title.grid(row = 0,column=0,pady=1)
-
-
-
-        self.back_button = ttk.Button(self, text = "back",command = self.hide_settings)
-        self.back_button.grid(sticky="W",padx=(self.winfo_screenwidth()/2-105),row=6,column=0)
-
-    def hide_main_menu(self):
-        self.Main_menu_title.grid_remove()
-        self.settings_button.grid_remove()
-
-    def show_main_menu(self):
-        self.Main_menu_title.grid(sticky="W",padx=(self.winfo_screenwidth()/2-105),row=0,column=0)
-        self.settings_button.grid(sticky="W",padx=(self.winfo_screenwidth()/2-105),row=1,column=0)
-
-    def create_label(self,text,font = "Arial",size = 30):
-        label = ttk.Label(self, text=text)
-        label.config(font = (font,size))
-        return label
+    def create_layout(self):
+        self.title_label = ttk.Label(self, text="EXPENSE TRACKER", style="Title.TLabel")
+        self.title_label.pack(pady=(30, 20))  
+        
+        self.container = Frame(self, bg="#2c3e50")
+        self.container.pack(fill=BOTH, expand=True, padx=50, pady=(0, 30))  
+        
+      
+        self.left_frame = Frame(self.container, bg="#3a546e")
+        self.left_frame.pack(side=LEFT, fill=BOTH, expand=True)  
+        
+        self.add_expense_btn = ttk.Button(self.left_frame, text="+ Add Expense")
+        self.add_expense_btn.pack(anchor="w", pady=10)  
+        
+        self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses")
+        self.view_expenses_btn.pack(anchor="w", pady=10)  
+        
+        self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary")
+        self.view_summary_btn.pack(anchor="w", pady=10)
+        
+        self.settings_button = ttk.Button(self.left_frame, text="Settings")
+        self.settings_button.pack(anchor="w", pady=10)
+        
+        self.exit_btn = ttk.Button(self.left_frame, text="Exit", command=self.quit)
+        self.exit_btn.pack(anchor="w", pady=(30, 10)) 
+        
+       
+        self.right_frame = Frame(self.container, bg="#29445f", width=1200)  
+        self.right_frame.pack(side=RIGHT, fill=Y, padx=(0, 0))  
+        self.right_frame.pack_propagate(False)  
+        
+        self.calendar_label = ttk.Label(
+            self.right_frame, 
+            text="CALENDAR", 
+            style="Heading.TLabel"
+        )
+        self.calendar_label.pack(pady=20)
+        
+        self.calendar_placeholder = Label(
+            self.right_frame,
+            text="Calendar is here",
+            font=("Arial", 12),
+            fg="#7f8c8d",
+            bg="#34495e"
+        )
+        self.calendar_placeholder.pack(expand=True)
 
     def run(self):
         self.mainloop()
-
-    def hide_settings(self):
-        self.Setting_1.grid_remove()
-        self.Setting_2.grid_remove()
-        self.Setting_3.grid_remove()
-        self.Setting_4.grid_remove()
-        self.Setting_5.grid_remove()
-        self.settings_title.grid_remove()
-        self.back_button.grid_remove()
-        self.show_main_menu()
-
-
 
 if __name__ == "__main__":
     app = App()
