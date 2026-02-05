@@ -1,5 +1,7 @@
+from sqlite3 import *
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 
 
 class App(Tk):
@@ -10,6 +12,35 @@ class App(Tk):
         self.attributes('-fullscreen',True)
         self.setup_buttons()
         self.show_main_menu()
+        self.file_title = ""
+
+        self.setup_table()
+        self.table.grid()
+
+
+    def setup_table(self, show="tree", height=10):
+        self.table =  ttk.Treeview(self, show=show, height=height)
+
+    def add_to_table(self, table, values):
+        data = []
+        for arg in values:
+            data.append(arg)
+
+        table.insert('', 'end', values=data)
+
+    def add_table_columns_and_display(self, table, *args):
+        column = []
+
+        for arg in args:
+            column += arg,
+        table['columns'] = column
+        count = 0
+
+        for arg in args:
+            if count >= 0:
+                table.heading(count, text=arg)
+                table.column(count, minwidth=2, stretch=True)
+            count += 1
 
 
     def create_main_menu(self):
@@ -17,6 +48,35 @@ class App(Tk):
         self.Main_menu_title.config(font=("Arial", 30))
 
 
+    def new_table(self):
+        self.new_label = ttk.Label(self, text = "NEW file")
+        file_name = ""
+
+        filename = filedialog.askopenfilename()
+        print(filename)
+        if filename != "":
+            opened_file = open(filename)
+            #self.text_box.delete(1.0, END)
+            #if not self.save_state:
+                #self.saveFile()
+            #for line in opened_file:
+                #self.text_box.insert(END, line)
+            opened_file.close()
+
+    def saveFile(self):
+        file_types = [ ("Text documents", "*.txt"),
+                       ("All files", "*.*")]
+
+        filename = filedialog.asksaveasfilename(filetypes=file_types,initialfile=self.file_title)
+        if filename != "":
+            file = open(filename, mode='w')
+            #file.write(data)
+            file.close()
+        self.filename = str(filename.split("/")[-1:][0])
+        self.title(self.filename)
+        print(type(filename))
+
+        self.save_state = True
     def setup_buttons(self):
         self.settings_button = ttk.Button(self, text = "Settings",command = self.settings_menu)
 
