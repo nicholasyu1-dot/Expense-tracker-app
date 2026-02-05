@@ -1,4 +1,3 @@
-from sqlite3 import *
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -46,26 +45,22 @@ class App(Tk):
     def create_main_menu(self):
         self.Main_menu_title = ttk.Label(self, text = "MAIN MENU")
         self.Main_menu_title.config(font=("Arial", 30))
+        self.newFile_button = ttk.Button(self, text = "Load File",command = self.Load_file)
 
 
-    def new_table(self):
+    def Load_file(self):
         self.new_label = ttk.Label(self, text = "NEW file")
-        file_name = ""
+        file_types = [ ("SpreadSheets", "*.xlsx,*.CSV,*.TSV")]
 
-        filename = filedialog.askopenfilename()
+        filename = filedialog.askopenfilename(filetypes = file_types)
         print(filename)
         if filename != "":
             opened_file = open(filename)
-            #self.text_box.delete(1.0, END)
-            #if not self.save_state:
-                #self.saveFile()
-            #for line in opened_file:
-                #self.text_box.insert(END, line)
+
             opened_file.close()
 
     def saveFile(self):
-        file_types = [ ("Text documents", "*.txt"),
-                       ("All files", "*.*")]
+        file_types = [ ("Text documents", "*.xml")]
 
         filename = filedialog.asksaveasfilename(filetypes=file_types,initialfile=self.file_title)
         if filename != "":
@@ -109,6 +104,7 @@ class App(Tk):
     def show_main_menu(self):
         self.Main_menu_title.grid(sticky="W",padx=(self.winfo_screenwidth()/2-105),row=0,column=0)
         self.settings_button.grid(sticky="W",padx=(self.winfo_screenwidth()/2-105),row=1,column=0)
+        self.newFile_button.grid()
 
     def create_label(self,text,font = "Arial",size = 30):
         label = ttk.Label(self, text=text)
