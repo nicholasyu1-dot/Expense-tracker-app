@@ -41,7 +41,8 @@ Architecture Summary
 
 	- Class-based design which is clean and organized
 
-functions:
+	functions:
+
 	- __init__ → startup
 	- setup_styles → appearance
 	- create_layout → structure
