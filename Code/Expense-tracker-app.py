@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk 
 
 class App(Tk):
     def __init__(self):
@@ -14,13 +14,15 @@ class App(Tk):
         
         self.bind("<Escape>", self.toggle_fullscreen)
 
-    def toggle_fullscreen(self, event=None):
+# We added this fucntion to resize the app into something that is not full screen
+    def toggle_fullscreen(self, event=None):  
         self.is_fullscreen = not self.is_fullscreen
         self.attributes('-fullscreen', self.is_fullscreen)
         if not self.is_fullscreen:
             self.geometry("1920x1000")  
 
-    def setup_styles(self):
+#this function is used to easily edit the styles of the labels, buttons, and frames
+    def setup_styles(self): 
         style = ttk.Style()
         style.theme_use('clam')
         
@@ -51,6 +53,7 @@ class App(Tk):
             background="#34495e"
         )
 
+#this function is made to simpify and group the code which is creating the layout for the front end
     def create_layout(self):
         self.title_label = ttk.Label(self, text="EXPENSE TRACKER", style="Title.TLabel")
         self.title_label.pack(pady=(30, 20))  

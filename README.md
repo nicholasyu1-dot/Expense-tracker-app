@@ -1,6 +1,44 @@
 # Expense-tracker-app
-This app will help you track and manage your expenses.
-This will app be using tkinter to make the UI and will be using along with sqlite3 for handling the database.
+
+OVERVIEW
+
+This is an app that is made for a personal expense tracker.
+It has features including:
+ 	-add expenses
+ 	-remove expenses
+ 	-interactable calendar
+ 	-will save previous works done in the app
 
 
-test
+SETTING UP THE APP
+
+To be able to use the code
+
+Simply copy this link:
+
+	https://github.com/nicholasyu1-dot/Expense-tracker-app.git
+
+After copying type this code in the terminal:
+
+	git clone https://github.com/nicholasyu1-dot/Expense-tracker-app.git
+
+To go to that repository:
+
+	cd <file-repository>
+
+Required to use the app:
+	-install python package
+	-TKinter (included in the python package)
+	-install SQLite
+
+Download the python from this link:
+	https://www.python.org/downloads/
+
+To install SQLite type this in your terminal:
+	winget install SQLite.SQLite
+
+
+LIMITATIONS
+
+	- The app doesn't have a calendar YET
+	- Most of the buttons doesn't have a feature YET
