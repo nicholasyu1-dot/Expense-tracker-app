@@ -25,9 +25,22 @@ class App(Tk):
         add_expenses_window.geometry(f"1000x700+{self.winfo_screenwidth() // 2 - 1000 // 2}+{self.winfo_screenheight()//2 - 700//2}")
         add_expenses_window.focus_force()
         add_expenses_window.grab_set()
+        add_expenses_window.configure(bg="#34495e")
         amount_value = Variable()
-        Amount  = ttk.Label(add_expenses_window,text = "Amount spent/")
+        Amount  = ttk.Label(add_expenses_window,text = "Amount spent")
+        Amount.config()
         date = ttk.Label(add_expenses_window,text = "Select a date")
+
+        style2 = ttk.Style()
+        style2.theme_use('clam')
+
+
+        style2.configure(
+            "TLabel",
+            font=("Arial", 18, "bold"),
+            foreground="#ecf0f1",
+            background="#34495e"
+        )
 
         type_of_expense = ttk.Label(add_expenses_window,text = "Select a type")
         Amount_entry = ttk.Entry(add_expenses_window,textvariable=amount_value)
@@ -35,7 +48,7 @@ class App(Tk):
         Selected_type = StringVar()
         options = ["select an option","Food","Clothing","Medicine","video games","Custom"]
         Type_dropdown = ttk.OptionMenu(add_expenses_window,Selected_type,*options)
-        Amount.grid(row = 0,column = 0,padx = 20,pady = 20)
+        Amount.grid(row = 0,column = 0,padx = 20,pady = 20,ipadx=10,ipady=10)
         date.grid(column = 0,row = 1,padx = 20,pady = 20)
         type_of_expense.grid(column = 0,row = 2,padx = 20,pady = 20)
         Amount_entry.grid(column = 1,row = 0,padx = 20,pady = 20)
@@ -91,30 +104,30 @@ class App(Tk):
         self.container.grid(padx=50, pady=(0, 30))
 
       
-        self.left_frame = Frame(self.container, bg="#3a546f",width=800,height=500)
+        self.left_frame = Frame(self.container, bg="#3a546f",width=700,height=900)
         self.left_frame.columnconfigure(0,weight=1)
-        self.left_frame.rowconfigure(0, weight=1)
-        self.left_frame.grid(row = 0,column = 0,columnspan=4,padx = (0,0),sticky="nsew")
+        self.left_frame.rowconfigure(0, weight=0)
+        self.left_frame.grid(row = 0,column = 0,columnspan=4,padx = (0,0),sticky="nsew",)
         self.left_frame.grid_propagate(False)
         
         self.add_expense_btn = ttk.Button(self.left_frame, text="+ Add Expense",command = self.add_expenses)
-        self.add_expense_btn.grid(row = 0,column = 0,sticky="nw", pady=10)
+        self.add_expense_btn.grid(row = 0,column = 0,sticky="nw", pady=(30,10),padx=30)
         
         self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses")
-        self.view_expenses_btn.grid(row = 1,column = 0,sticky="w", pady=10)
+        self.view_expenses_btn.grid(row = 1,column = 0,sticky="nw", pady=10,padx=30)
         
         self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary")
-        self.view_summary_btn.grid(row = 2,column = 0,sticky="nw", pady=10)
+        self.view_summary_btn.grid(row = 2,column = 0,sticky="nw", pady=10,padx=30)
         
         self.settings_button = ttk.Button(self.left_frame, text="Settings")
-        self.settings_button.grid(row = 3,column = 0,sticky="nw", pady=10)
+        self.settings_button.grid(row = 3,column = 0,sticky="nw", pady=10,padx=30)
         
         self.exit_btn = ttk.Button(self.left_frame, text="Exit", command=self.quit)
-        self.exit_btn.grid(row = 4,column = 0,sticky="nw", pady=(30, 10))
+        self.exit_btn.grid(row = 4,column = 0,sticky="nw", pady=(30, 10),padx=30)
         
        
         self.right_frame = Frame(self.container, bg="#29445f", width=1200)
-        self.right_frame.grid(row = 0,column = 5,padx=(0, 0),rowspan=10,sticky = "nsew")
+        self.right_frame.grid(row = 0,column = 5,padx=(0, 0),rowspan=1,sticky = "nsew")
         self.right_frame.grid_propagate(False)
         
         self.calendar_label = ttk.Label(
@@ -122,7 +135,7 @@ class App(Tk):
             text="CALENDAR", 
             style="Heading.TLabel"
         )
-        self.calendar_label.grid(row = 0,column = 1,pady=20)
+        self.calendar_label.grid(row = 0,column = 1,pady=20,padx=500,sticky="nsew",columnspan=2)
         
         self.calendar_placeholder = Label(
             self.right_frame,
@@ -131,27 +144,8 @@ class App(Tk):
             fg="#7f8c8d",
             bg="#34495e"
         )
-        self.calendar_placeholder.grid(row = 1,column = 5,columnspan=5)
-       #  self.helper_frame = Frame(self.container,width = 1,)
+        self.calendar_placeholder.grid(row = 1,column = 1,columnspan=5,pady=300)
 
-        he1 = ""
-        he2= ""
-        he3= ""
-        he4= ""
-        he5= ""
-        he6= ""
-        he7= ""
-        he8= ""
-        helpers = [he1,he2,he3,he4,he5,he6,he7,he8]
-        row = 1
-        column = 1
-        # for helper in helpers:
-        #     helper = Frame(self.container,width = 300,height=100,borderwidth=0,border=0)
-        #     helper.grid(column=column,row = row)
-        #     column +=1
-        #     row +=1
-
-        #self.helper_frame.grid(column = 1000,row = 1000,sticky = "nsew")
     def run(self):
         self.mainloop()
 
