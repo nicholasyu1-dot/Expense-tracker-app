@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk 
+from tkinter import ttk
 
 class App(Tk):
     def __init__(self):
