@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk 
+from tkinter import ttk
 
 
 class App(Tk):
@@ -15,15 +15,49 @@ class App(Tk):
         
         self.bind("<Escape>", self.toggle_fullscreen)
 
-# We added this fucntion to resize the app into something that is not full screen
-    def toggle_fullscreen(self, event=None):  
+
+    def show_add_expenses_window(self):
+        self.amount.grid(row = 0,column = 0,padx = 20,pady = 20,ipadx=10,ipady=10)
+        self.date.grid(column = 0,row = 1,padx = 20,pady = 20)
+        self.type_of_expense.grid(column = 0,row = 2,padx = 20,pady = 20)
+        self.amount_entry.grid(column = 1,row = 0,padx = 20,pady = 20)
+        self.date_button.grid(column = 1,row = 1,padx = 20,pady = 20)
+        self.type_dropdown.grid(column = 1,row = 2,padx = 20,pady = 20)
+
+
+    def setup_add_expenses_window(self):
+        self.add_expenses_window = Toplevel(self)
+        self.add_expenses_window.title("Add an expense")
+        self.add_expenses_window.geometry(f"1000x700+{self.winfo_screenwidth() // 2 - 1000 // 2}+{self.winfo_screenheight()//2 - 700//2}")
+        self.add_expenses_window.focus_force()
+        self.add_expenses_window.grab_set()
+        self.add_expenses_window.configure(bg = "#34495e")
+
+        self.amount_value = Variable()
+        self.amount  = ttk.Label(self.add_expenses_window,text = "Amount spent")
+        self.amount.config()
+        self.date = ttk.Label(self.add_expenses_window,text = "Select a date")
+        self.type_of_expense = ttk.Label(self.add_expenses_window,text = "Select a type")
+        self.amount_entry = ttk.Entry(self.add_expenses_window,textvariable = self.amount_value)
+        self.date_button  = ttk.Button(self.add_expenses_window,text = "Choose a date")
+        self.selected_type = StringVar()
+        self.options = ["select an option","Food","Clothing","Medicine","video games","Custom"]
+        self.type_dropdown = ttk.OptionMenu(self.add_expenses_window,self.selected_type,*self.options)
+
+
+    def create_add_expenses_window(self):
+        self.setup_add_expenses_window()
+        self.show_add_expenses_window()
+
+
+    def toggle_fullscreen(self, event = None):
         self.is_fullscreen = not self.is_fullscreen
         self.attributes('-fullscreen', self.is_fullscreen)
         if not self.is_fullscreen:
             self.geometry("1920x1000")  
 
-#this function is used to easily edit the styles of the labels, buttons, and frames
-    def setup_styles(self): 
+
+    def setup_styles(self):
         style = ttk.Style()
         style.theme_use('clam')
         
@@ -54,7 +88,6 @@ class App(Tk):
             background = "#34495e"
         )
 
-#this function is made to simpify and group the code which is creating the layout for the front end
     def create_layout(self):
         self.title_label = ttk.Label(self, text = "EXPENSE TRACKER", style = "Title.TLabel")
         self.title_label.grid(pady = (30, 20))
