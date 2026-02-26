@@ -16,7 +16,6 @@ class App(Tk):
         self.bind("<Escape>", self.toggle_fullscreen)
 
 
-
     def show_add_expenses_window(self):
         self.amount.grid(row = 0,column = 0,padx = 20,pady = 20,ipadx=10,ipady=10)
         self.date.grid(column = 0,row = 1,padx = 20,pady = 20)
