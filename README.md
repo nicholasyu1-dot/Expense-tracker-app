@@ -9,6 +9,12 @@ It has features including:
  	-interactable calendar
  	-will save previous works done in the app
 
+PYTEST
+
+	To run the pytest just copy paste this in the terminal:
+			python -m pytest
+
+
 
 SETTING UP THE APP
 
