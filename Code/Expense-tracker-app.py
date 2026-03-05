@@ -12,7 +12,7 @@ class App(Tk):
         
         self.setup_styles()
         self.create_layout()
-        
+        self.custom_type_var = Variable()
         self.bind("<Escape>", self.toggle_fullscreen)
 
 
@@ -23,6 +23,7 @@ class App(Tk):
         self.amount_entry.grid(column = 1,row = 0,padx = 20,pady = 20)
         self.date_button.grid(column = 1,row = 1,padx = 20,pady = 20)
         self.type_dropdown.grid(column = 1,row = 2,padx = 20,pady = 20)
+        self.submit_button.grid(column = 0,row = 3)
 
 
     def setup_add_expenses_window(self):
@@ -43,6 +44,60 @@ class App(Tk):
         self.selected_type = StringVar()
         self.options = ["select an option","Food","Clothing","Medicine","video games","Custom"]
         self.type_dropdown = ttk.OptionMenu(self.add_expenses_window,self.selected_type,*self.options)
+
+        self.submit_button = ttk.Button(self.add_expenses_window,text = "Submit",command = self.submit)
+
+    def submit(self):
+        choice = self.selected_type.get()
+        print(choice)
+        if choice == "select an option":
+            pass
+
+        elif choice == "Custom" and self.custom_type_var.get() == "":
+            print("1st")
+
+
+            self.custom_type = ttk.Entry(self.add_expenses_window,textvariable = self.custom_type_var)
+            self.custom_type.grid(column = 1, row = 3)
+
+
+        elif self.custom_type_var.get() !="":
+            print("2nd")
+
+            self.type = self.custom_type_var.get()
+            self.date_value = ""
+            self.amount_value = self.amount_value.get()
+
+            if self.amount_value == "":
+                self.amount_value = 0
+            print(self.date_value, self.amount_value, self.type)
+            self.close_add_expenses_window()
+
+
+
+        else:
+            print("3rd")
+            self.date_value = ""
+            self.amount_value = self.amount_value.get()
+
+            self.type = self.selected_type.get()
+            if self.amount_value == "":
+                self.amount_value = 0
+            print(self.date_value, self.amount_value, self.type)
+
+            self.close_add_expenses_window()
+
+
+
+    def close_add_expenses_window(self):
+        self.amount.grid_remove()
+        self.date.grid_remove()
+        self.type_of_expense.grid_remove()
+        self.amount_entry.grid_remove()
+        self.date_button.grid_remove()
+        self.type_dropdown.grid_remove()
+        self.submit_button.grid_remove()
+        self.add_expenses_window.destroy()
 
 
     def create_add_expenses_window(self):
@@ -77,7 +132,7 @@ class App(Tk):
             "TButton",
             font = ("Arial", 12),
             padding = (15, 10),
-            
+
         )
         style.configure(
             "Left.TFrame",
