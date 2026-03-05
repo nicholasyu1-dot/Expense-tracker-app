@@ -1,6 +1,7 @@
 
 from tkinter import *
 from tkinter import ttk, messagebox
+from expense_logic import validate_expense
 
 
 class Menu:
@@ -69,6 +70,9 @@ class Menu:
             category = self.selected_type.get()
             date_string = self.date_value.get()
             note = self.note_value.get()
+
+            validate_expense(amount, category, date_string, note)
+
 
             expense = {
                 "amount": amount,
