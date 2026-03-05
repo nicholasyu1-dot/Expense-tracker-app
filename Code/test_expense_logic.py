@@ -6,7 +6,7 @@ from expense_logic import validate_expense
 class TestExpenseValidation(unittest.TestCase):
     def test_valid_expense(self):
         self.assertTrue(
-            validate_expense(100, "Food", "2026-02-30", "Lunch")
+            validate_expense(100, "Food", "2026-02-28", "Lunch")
         )
 
     def test_negative_amount(self):
