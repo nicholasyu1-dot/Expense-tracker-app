@@ -25,3 +25,7 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest
+
+      - name: Run app
+        run: |
+          python C:\Users\09054\OneDrive\Documents\COMP_PROG_EXPENSE_TRACKER\Expense-tracker-app\Code\Expense-tracker-app.py
