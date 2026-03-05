@@ -29,4 +29,4 @@ jobs:
 
       - name: Run app
         run: |
-          python Code\Expense-tracker-app.py
+          python Code/Expense-tracker-app.py
