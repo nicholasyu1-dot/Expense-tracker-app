@@ -1,6 +1,16 @@
 from tkinter import *
 from tkinter import ttk, messagebox
+
+from calendar_view import CalendarView
+from datetime import datetime
+
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from expense_logic import validate_expense
+from Database.database import init_db, add_expense, get_all_expenses, get_expenses_by_date
 
 
 class App(Tk):
@@ -10,13 +20,29 @@ class App(Tk):
         self.is_fullscreen = True
         self.attributes('-fullscreen', True)
         self.configure(bg="#2c3e50")
-
+        self.add_expenses_window = None
         self.expenses = []
+
+        init_db()
+        self.load_expenses()
 
         self.setup_styles()
         self.create_layout()
 
         self.bind("<Escape>", self.toggle_fullscreen)
+
+    def load_expenses(self):
+        rows = get_all_expenses()
+        self.expenses = [
+            {
+                "id": row[0],
+                "amount": row[1],
+                "category": row[2],
+                "date": row[3],
+                "note": row[4]
+            }
+            for row in rows
+        ]
 
     def show_add_expenses_window(self):
         self.amount.grid(row=0, column=0, padx=20, pady=20, ipadx=10, ipady=10)
@@ -67,6 +93,11 @@ class App(Tk):
         )
 
     def create_add_expenses_window(self):
+        if self.add_expenses_window is not None and self.add_expenses_window.winfo_exists():
+            self.add_expenses_window.lift()
+            self.add_expenses_window.focus_force()
+            return
+
         self.setup_add_expenses_window()
         self.show_add_expenses_window()
 
@@ -79,6 +110,8 @@ class App(Tk):
 
             validate_expense(amount, category, date_string, note)
 
+            add_expense(amount, category, date_string, note)
+
             expense = {
                 "amount": amount,
                 "category": category,
@@ -88,11 +121,48 @@ class App(Tk):
 
             self.expenses.append(expense)
 
-            messagebox.showinfo("Success", "Expense saved successfully")
             self.add_expenses_window.destroy()
+            self.add_expenses_window = None
+
+            messagebox.showinfo("Success", "Expense saved successfully")
 
         except ValueError as e:
             messagebox.showerror("Error", str(e))
+
+    def show_view_expenses_window(self):
+        self.load_expenses()
+
+        view_window = Toplevel(self)
+        view_window.title("Saved Expenses")
+        view_window.geometry("900x500")
+        view_window.configure(bg="#34495e")
+
+        columns = ("amount", "category", "date", "note")
+        tree = ttk.Treeview(view_window, columns=columns, show="headings")
+
+        tree.heading("amount", text="Amount")
+        tree.heading("category", text="Category")
+        tree.heading("date", text="Date")
+        tree.heading("note", text="Note")
+
+        tree.column("amount", width=100)
+        tree.column("category", width=150)
+        tree.column("date", width=120)
+        tree.column("note", width=400)
+
+        for expense in self.expenses:
+            tree.insert(
+                "",
+                "end",
+                values=(
+                    expense["amount"],
+                    expense["category"],
+                    expense["date"],
+                    expense["note"]
+                )
+            )
+
+        tree.pack(fill=BOTH, expand=True, padx=20, pady=20)
 
     def toggle_fullscreen(self, event=None):
         self.is_fullscreen = not self.is_fullscreen
@@ -131,26 +201,32 @@ class App(Tk):
         )
 
     def create_layout(self):
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
         self.title_label = ttk.Label(self, text="EXPENSE TRACKER", style="Title.TLabel")
-        self.title_label.grid(pady=(30, 20))
+        self.title_label.grid(row=0, column=0, pady=(30, 20))
 
         self.container = Frame(self, bg="#2c3e50")
+        self.container.grid(row=1, column=0, sticky="nsew", padx=50, pady=(0, 30))
 
-        for i in (0, 5):
-            self.container.columnconfigure(i, weight=1)
-            self.container.rowconfigure(i, weight=1)
-
-        self.container.grid(padx=50, pady=(0, 30))
+        self.container.grid_rowconfigure(0, weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
+        self.container.grid_columnconfigure(1, weight=2)
+        self.container.grid_propagate(False)
 
         self.create_left_frame()
         self.create_right_frame()
-
+        
+        
+        
     def create_left_frame(self):
+        
         self.left_frame = Frame(self.container, bg="#3a546f", width=700, height=900)
-        self.left_frame.columnconfigure(0, weight=1)
-        self.left_frame.rowconfigure(0, weight=0)
-        self.left_frame.grid(row=0, column=0, columnspan=4, padx=(0, 0), sticky="nsew")
+        self.left_frame.grid(row=0, column=0, sticky="nsew")
         self.left_frame.grid_propagate(False)
+
+        self.left_frame.columnconfigure(0, weight=1)
 
         self.add_expense_btn = ttk.Button(
             self.left_frame,
@@ -159,7 +235,11 @@ class App(Tk):
         )
         self.add_expense_btn.grid(row=0, column=0, sticky="nw", pady=(30, 10), padx=30)
 
-        self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses")
+        self.view_expenses_btn = ttk.Button(
+            self.left_frame,
+            text="View Expenses",
+            command=self.show_view_expenses_window
+        )
         self.view_expenses_btn.grid(row=1, column=0, sticky="nw", pady=10, padx=30)
 
         self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary")
@@ -172,26 +252,13 @@ class App(Tk):
         self.exit_btn.grid(row=4, column=0, sticky="nw", pady=(30, 10), padx=30)
 
     def create_right_frame(self):
-        self.right_frame = Frame(self.container, bg="#29445f", width=1200)
-        self.right_frame.grid(row=0, column=5, padx=(0, 0), rowspan=1, sticky="nsew")
+        self.right_frame = Frame(self.container, bg="#29445f", height=900)
+        self.right_frame.grid(row=0, column=1, sticky="nsew", padx=(0, 15))
         self.right_frame.grid_propagate(False)
 
-        self.calendar_label = ttk.Label(
-            self.right_frame,
-            text="CALENDAR",
-            style="Heading.TLabel"
-        )
-        self.calendar_label.grid(row=0, column=1, pady=20, padx=500, sticky="nsew", columnspan=2)
-
-        self.calendar_placeholder = Label(
-            self.right_frame,
-            text="Calendar is here",
-            font=("Arial", 12),
-            fg="#7f8c8d",
-            bg="#34495e"
-        )
-        self.calendar_placeholder.grid(row=1, column=1, columnspan=5, pady=300)
-
+        self.calendar_view = CalendarView(self.right_frame)
+        self.calendar_view.pack(fill=BOTH, expand=True, padx=20, pady=20)
+        
     def run(self):
         self.mainloop()
 
