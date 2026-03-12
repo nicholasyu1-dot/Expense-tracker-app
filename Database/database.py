@@ -25,20 +25,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-def get_expenses_by_date(date):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT id, amount, category, date, note
-        FROM expenses
-        WHERE date = ?
-        ORDER BY id DESC
-    """, (date,))
-
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
 
 def add_expense(amount, category, date, note):
     conn = get_connection()
