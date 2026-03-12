@@ -235,27 +235,25 @@ class App(Tk):
         self.exit_btn.grid(row=4, column=0, sticky="nw", pady=(30, 10), padx=30)
 
     def create_right_frame(self):
-        self.right_frame = Frame(self.container, bg="#29445f", width=1200, height=900)
+        self.right_frame = Frame(self.container, bg="#29445f", width=1200)
         self.right_frame.grid(row=0, column=5, padx=(0, 0), rowspan=1, sticky="nsew")
         self.right_frame.grid_propagate(False)
 
-        self.welcome_label = Label(
+        self.calendar_label = ttk.Label(
             self.right_frame,
-            text="Welcome to your Expense Tracker",
-            font=("Arial", 24, "bold"),
-            bg="#29445f",
-            fg="white"
+            text="CALENDAR",
+            style="Heading.TLabel"
         )
-        self.welcome_label.pack(pady=(80, 20))
+        self.calendar_label.grid(row=0, column=1, pady=20, padx=500, sticky="nsew", columnspan=2)
 
-        self.info_label = Label(
+        self.calendar_placeholder = Label(
             self.right_frame,
-            text="Use the buttons on the left to add and view your expenses.",
-            font=("Arial", 16),
-            bg="#29445f",
-            fg="#ecf0f1"
+            text="Calendar is here",
+            font=("Arial", 12),
+            fg="#7f8c8d",
+            bg="#34495e"
         )
-        self.info_label.pack(pady=10)
+        self.calendar_placeholder.grid(row=1, column=1, columnspan=5, pady=300)
 
     def run(self):
         self.mainloop()
