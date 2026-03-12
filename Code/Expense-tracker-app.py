@@ -1,5 +1,16 @@
 from Button_menus import *
-from sqlite3 import *
+
+from tkinter import *
+from tkinter import ttk, messagebox
+
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+
+from Database.database import init_db, add_expense, get_all_expenses
+
 
 class App(Tk):
     def __init__(self):
