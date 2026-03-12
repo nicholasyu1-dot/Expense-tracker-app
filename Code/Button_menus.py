@@ -88,17 +88,53 @@ class Menu:
 
 
         except ValueError as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", "Please enter values")
 
 
 
 
     def setup_view_expenses_window(self,expenses,screen):
-        self.view_expenses_window = Toplevel(screen)
         self.expenses = expenses
 
 
 
     def create_view_expenses_window(self,expenses,screen):
         self.setup_view_expenses_window(expenses,screen)
-        #self.show_view_expenses_window()
+        self.show_view_expenses_window(screen)
+
+    def show_view_expenses_window(self,screen):
+
+        view_window = Toplevel(screen)
+        view_window.title("Saved Expenses")
+        view_window.geometry("900x500")
+
+        view_window.focus_force()
+        view_window.grab_set()
+
+        view_window.configure(bg="#34495e")
+
+        columns = ("amount", "category", "date", "note")
+        tree = ttk.Treeview(view_window, columns=columns, show="headings")
+
+        tree.heading("amount", text="Amount")
+        tree.heading("category", text="Category")
+        tree.heading("date", text="Date")
+        tree.heading("note", text="Note")
+
+        tree.column("amount", width=100)
+        tree.column("category", width=150)
+        tree.column("date", width=120)
+        tree.column("note", width=400)
+
+        for expense in self.expenses:
+            tree.insert(
+                "",
+                "end",
+                values=(
+                    expense["amount"],
+                    expense["category"],
+                    expense["date"],
+                    expense["note"]
+                )
+            )
+        tree.pack(fill=BOTH, expand=True, padx=20, pady=20)

@@ -1,7 +1,6 @@
 from Button_menus import *
 
-from tkinter import *
-from tkinter import ttk, messagebox
+
 
 import os
 import sys
@@ -10,6 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 from Database.database import init_db, add_expense, get_all_expenses
+
 
 
 class App(Tk):
@@ -25,9 +25,30 @@ class App(Tk):
         self.setup_styles()
         self.create_layout()
 
-        self.bind("<Escape>", self.toggle_fullscreen)
-        self.Button_menus = Menu()
+        init_db()
+        self.load_expenses()
 
+        self.bind("<Escape>", self.toggle_fullscreen)
+        self.button_menus = Menu()
+
+    def load_expenses(self):
+        rows = get_all_expenses()
+        self.expenses = [
+            {
+                "id": row[0],
+                "amount": row[1],
+                "category": row[2],
+                "date": row[3],
+                "note": row[4]
+            }
+            for row in rows
+        ]
+
+
+
+    def View_expenses_helper(self):
+        self.load_expenses()
+        self.button_menus.create_view_expenses_window(self.expenses,self)
 
     def toggle_fullscreen(self, event=None):
         self.is_fullscreen = not self.is_fullscreen
@@ -90,11 +111,11 @@ class App(Tk):
         self.add_expense_btn = ttk.Button(
             self.left_frame,
             text="+ Add Expense",
-            command=lambda: self.Button_menus.create_add_expenses_window(self.expenses,self)
+            command=lambda: self.button_menus.create_add_expenses_window(self.expenses,self)
         )
         self.add_expense_btn.grid(row=0, column=0, sticky="nw", pady=(30, 10), padx=30)
 
-        self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses")
+        self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses",command=self.View_expenses_helper)
         self.view_expenses_btn.grid(row=1, column=0, sticky="nw", pady=10, padx=30)
 
         self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary")
