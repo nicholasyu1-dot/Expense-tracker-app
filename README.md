@@ -46,9 +46,20 @@ To install SQLite type this in your terminal:
 Architecture Summary 
 
 	- Class-based design which is clean and organized
-
+	
+	├── README.md
+	├── Code/
+	│   ├── Expense-tracker-app.py
+	│   ├── expense_logic.py
+	│   ├── test_expense_logic.py
+	│   └── __pycache__/
+	├── Database/
+	│   └── database.py
+	└── .github/
+	    └── workflows/
+	        └── github-actions.yml
 	functions:
-
+	
 	- __init__ → startup
 	- setup_styles → appearance
 	- create_layout → structure
