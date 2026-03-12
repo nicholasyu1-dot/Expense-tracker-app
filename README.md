@@ -26,23 +26,26 @@ PYTEST
 SETTING UP THE APP
 
 Required to use the app:
-	-install python package
-	-TKinter (included in the python package)
-	-install SQLite
+
+		-install python package
+		-TKinter (included in the python package)
+		-install SQLite
 
 Download the python from this link:
+
 	https://www.python.org/downloads/
 
 To install SQLite type this in your terminal:
 	winget install SQLite.SQLite
 
-To be able to use the code
+To run the app
 
 Go to this link and download the zip file.
 
 	https://github.com/nicholasyu1-dot/Expense-tracker-app/releases/tag/v1.0.0
 
 After extracting the zip file into a folder. 
+
 	- Open VsCode 
 	- Open the folder where you extracted the zip file
 	- run this link in the terminal:
