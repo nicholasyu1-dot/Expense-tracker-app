@@ -1,6 +1,13 @@
 from tkinter import *
 from tkinter import ttk, messagebox
+
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from expense_logic import validate_expense
+from Database.database import init_db, add_expense, get_all_expenses
 
 
 class App(Tk):
@@ -10,13 +17,29 @@ class App(Tk):
         self.is_fullscreen = True
         self.attributes('-fullscreen', True)
         self.configure(bg="#2c3e50")
-
+        self.add_expenses_window = None
         self.expenses = []
+
+        init_db()
+        self.load_expenses()
 
         self.setup_styles()
         self.create_layout()
 
         self.bind("<Escape>", self.toggle_fullscreen)
+
+    def load_expenses(self):
+        rows = get_all_expenses()
+        self.expenses = [
+            {
+                "id": row[0],
+                "amount": row[1],
+                "category": row[2],
+                "date": row[3],
+                "note": row[4]
+            }
+            for row in rows
+        ]
 
     def show_add_expenses_window(self):
         self.amount.grid(row=0, column=0, padx=20, pady=20, ipadx=10, ipady=10)
@@ -67,6 +90,11 @@ class App(Tk):
         )
 
     def create_add_expenses_window(self):
+        if self.add_expenses_window is not None and self.add_expenses_window.winfo_exists():
+            self.add_expenses_window.lift()
+            self.add_expenses_window.focus_force()
+            return
+
         self.setup_add_expenses_window()
         self.show_add_expenses_window()
 
@@ -79,20 +107,51 @@ class App(Tk):
 
             validate_expense(amount, category, date_string, note)
 
-            expense = {
-                "amount": amount,
-                "category": category,
-                "date": date_string,
-                "note": note
-            }
+            add_expense(amount, category, date_string, note)
+            self.load_expenses()
 
-            self.expenses.append(expense)
+            self.add_expenses_window.destroy()
+            self.add_expenses_window = None
 
             messagebox.showinfo("Success", "Expense saved successfully")
-            self.add_expenses_window.destroy()
 
         except ValueError as e:
             messagebox.showerror("Error", str(e))
+
+    def show_view_expenses_window(self):
+        self.load_expenses()
+
+        view_window = Toplevel(self)
+        view_window.title("Saved Expenses")
+        view_window.geometry("900x500")
+        view_window.configure(bg="#34495e")
+
+        columns = ("amount", "category", "date", "note")
+        tree = ttk.Treeview(view_window, columns=columns, show="headings")
+
+        tree.heading("amount", text="Amount")
+        tree.heading("category", text="Category")
+        tree.heading("date", text="Date")
+        tree.heading("note", text="Note")
+
+        tree.column("amount", width=100)
+        tree.column("category", width=150)
+        tree.column("date", width=120)
+        tree.column("note", width=400)
+
+        for expense in self.expenses:
+            tree.insert(
+                "",
+                "end",
+                values=(
+                    expense["amount"],
+                    expense["category"],
+                    expense["date"],
+                    expense["note"]
+                )
+            )
+
+        tree.pack(fill=BOTH, expand=True, padx=20, pady=20)
 
     def toggle_fullscreen(self, event=None):
         self.is_fullscreen = not self.is_fullscreen
@@ -159,7 +218,11 @@ class App(Tk):
         )
         self.add_expense_btn.grid(row=0, column=0, sticky="nw", pady=(30, 10), padx=30)
 
-        self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses")
+        self.view_expenses_btn = ttk.Button(
+            self.left_frame,
+            text="View Expenses",
+            command=self.show_view_expenses_window
+        )
         self.view_expenses_btn.grid(row=1, column=0, sticky="nw", pady=10, padx=30)
 
         self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary")
