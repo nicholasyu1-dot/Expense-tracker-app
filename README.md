@@ -16,13 +16,14 @@ Version 1.0.0
 	The Expense tracker no has a feature of adding expenses and viewing it. The user can view past
 	expenses because a database is implemented to save the user input.
 
+CONTAINER USAGE
 
-PYTEST
-
-	To run the pytest just copy paste this in the terminal:
-			python -m pytest
-
-
+	- Go to Windows cmd/powershell 
+	- input:
+		cd "(folder path paste here)"
+		docker build -t expense-tracker-app .
+		docker run --rm -it expense-tracker-app
+		
 
 SETTING UP THE APP
 
@@ -53,6 +54,10 @@ After extracting the zip file into a folder.
 		python Code\Expense-tracker-app.py
 
 
+PYTEST
+
+	To run the pytest just copy paste this in the terminal:
+			python -m pytest
 
 Architecture Summary 
 
