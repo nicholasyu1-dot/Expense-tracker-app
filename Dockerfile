@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install tk
+RUN RUN apt-get update && apt-get install -y tk8.6
 
 CMD ["python", "Code/Expense-tracker-app.py"] 
