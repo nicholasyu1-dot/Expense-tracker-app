@@ -8,7 +8,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
-from Database.database import init_db, add_expense, get_all_expenses
+from Database.database import init_db, add_expense, get_all_expenses, table_monthly_creation
 
 
 
@@ -44,7 +44,14 @@ class App(Tk):
             for row in rows
         ]
 
+    def load_monthly(self):
+        self.monthly_expenses =  table_monthly_creation()
 
+
+
+    def Monthy_expenses_helper(self):
+        self.load_monthly()
+        self.button_menus.create_monthly_expenses_window(self.monthly_expenses, self)
 
     def View_expenses_helper(self):
         self.load_expenses()
@@ -118,7 +125,7 @@ class App(Tk):
         self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses",command=self.View_expenses_helper)
         self.view_expenses_btn.grid(row=1, column=0, sticky="nw", pady=10, padx=30)
 
-        self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary")
+        self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary",command=self.Monthy_expenses_helper)
         self.view_summary_btn.grid(row=2, column=0, sticky="nw", pady=10, padx=30)
 
         self.settings_button = ttk.Button(self.left_frame, text="Settings")

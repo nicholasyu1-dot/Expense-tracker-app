@@ -138,3 +138,56 @@ class Menu:
                 )
             )
         tree.pack(fill=BOTH, expand=True, padx=20, pady=20)
+
+
+
+
+
+    def setup_monthly_expenses_window(self,expenses,screen):
+        self.monthly_expenses = expenses
+
+
+
+    def create_monthly_expenses_window(self,expenses,screen):
+        self.setup_monthly_expenses_window(expenses,screen)
+        self.show_monthly_expenses_window(screen)
+
+    def show_monthly_expenses_window(self,screen):
+
+        monthly_window = Toplevel(screen)
+        monthly_window.title("Monthly Expenses")
+        monthly_window.geometry("900x500")
+
+        monthly_window.focus_force()
+        monthly_window.grab_set()
+
+        monthly_window.configure(bg="#34495e")
+
+        columns = ( "month","amount")
+        tree = ttk.Treeview(monthly_window, columns=columns, show="headings")
+
+        tree.heading("month", text="Month")
+
+        tree.heading("amount", text="Amount")
+
+        tree.column("month", width=120)
+        tree.column("amount", width=100)
+
+        print(self.monthly_expenses)
+        for month,expenses in self.monthly_expenses.items():
+            print(expenses)
+            total_expenses = 0
+            for expense in expenses:
+                print(expense[0])
+
+                total_expenses+=expense[0]
+            tree.insert(
+                "",
+                "end",
+                values=(
+                    month,
+                    total_expenses
+                )
+            )
+        tree.pack(fill=BOTH, expand=True, padx=20, pady=20)
+
