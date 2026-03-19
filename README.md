@@ -4,10 +4,11 @@ OVERVIEW
 
 This is an app that is made for a personal expense tracker.
 It has features including:
- 	-add expenses
- 	-remove expenses
- 	-interactable calendar
- 	-will save previous works done in the app
+
+	 	-add expenses
+	 	-remove expenses
+	 	-interactable calendar
+	 	-will save previous works done in the app
 
 RELEASE NOTES
 
