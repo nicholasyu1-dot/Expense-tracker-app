@@ -62,6 +62,9 @@ PYTEST
 
 BENCHMARKING AND PROFILING
 	
+	The tool used in the benchamrking and profiling is CProfile
+	The metric is in seconds
+	
 	The numbers during the profiling means
 		 necalls - is how many times a function was called
 		 tottime - time spent in the function alone
