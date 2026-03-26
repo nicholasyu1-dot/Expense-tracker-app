@@ -3,7 +3,9 @@ from tkinter import ttk, messagebox
 
 import os
 import sys
-
+import cProfile
+import pstats
+import io
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from expense_logic import validate_expense
@@ -27,6 +29,18 @@ class App(Tk):
         self.create_layout()
 
         self.bind("<Escape>", self.toggle_fullscreen)
+        
+        
+        # profile calls
+        # self.profile_all()
+        self.profile_ui_functions()
+        self.profile_all_timed()
+
+
+
+
+
+
 
     def load_expenses(self):
         rows = get_all_expenses()
@@ -86,7 +100,7 @@ class App(Tk):
         self.save_button = ttk.Button(
             self.add_expenses_window,
             text="Save Expense",
-            command=self.save_expense
+            command= lambda: self.profile_function(self.save_expense)
         )
 
     def create_add_expenses_window(self):
@@ -255,10 +269,49 @@ class App(Tk):
         )
         self.calendar_placeholder.grid(row=1, column=1, columnspan=5, pady=300)
 
+    def profile_function(self, func, *args, **kwargs):  
+        print("--------------------------\n")
+        profiler = cProfile.Profile()
+        profiler.enable()
+        func(*args, **kwargs)
+        profiler.disable()
+
+        stream = io.StringIO()
+        stats = pstats.Stats(profiler, stream=stream).sort_stats("cumulative")
+        stats.print_stats(5)
+        print(f"Profiling results for {func.__name__} ")
+        print(stream.getvalue())
+        print("--------------------------\n")
+
+    
+    def profile_ui_functions(self):
+        self.setup_add_expenses_window()
+        self.profile_function(self.show_add_expenses_window)
+        if self.add_expenses_window:
+            self.add_expenses_window.destroy()
+            self.add_expenses_window = None
+    
+    def profile_all_timed(self):
+        print("--------------------------\n")
+
+        import time
+        start = time.time()
+        self.profile_all()
+        end = time.time()
+        print(f"--- Total time for all profiled functions: {end - start:.4f} seconds ---")
+        print("--------------------------\n")
+
+    
+    def profile_all(self):
+        self.profile_function(self.load_expenses)
+        self.profile_function(self.create_add_expenses_window)
+        self.profile_function(self.show_view_expenses_window)
     def run(self):
         self.mainloop()
 
-
+   
+    
 if __name__ == "__main__":
     app = App()
     app.run()
+    
