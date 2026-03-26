@@ -59,6 +59,24 @@ PYTEST
 	To run the pytest just copy paste this in the terminal:
 			python -m pytest
 
+
+BENCHMARKING AND PROFILING
+	
+	The numbers during the profiling means
+		 necalls - is how many times a function was called
+		 tottime - time spent in the function alone
+		 cumtime - total time including everythind it called inside it
+			
+	Total time per functions
+		show_add_expense_window - 0.000s
+		load_expenses           - 0.001s
+		create_add_expenses_window - 0.015s
+		show_view_expenses_window - 0.006s
+		save_expense               - 1.463s
+
+	Explanation for the highest
+		the save expense is not slow on the saving part but because of the "showinfo" which is the popup that ate 1.426s out of 		the 1.463s which basically means that it is the wait time for the user to click ok.
+	
 Architecture Summary 
 
 	- Class-based design which is clean and organized
