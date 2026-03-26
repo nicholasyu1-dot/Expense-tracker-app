@@ -75,7 +75,7 @@ BENCHMARKING AND PROFILING
 		save_expense               - 1.463s
 
 	Explanation for the highest
-		the save expense is not slow on the saving part but because of the "showinfo" which is the popup that ate 1.426s out of 		the 1.463s which basically means that it is the wait time for the user to click ok.
+		the save expense is not slow on the saving part but because of the "showinfo" which is the popup that ate 1.426s out of the 1.463s which basically means that it is the wait time for the user to click ok.
 	
 Architecture Summary 
 
