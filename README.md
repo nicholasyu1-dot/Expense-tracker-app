@@ -1,6 +1,6 @@
 # Expense-tracker-app
 
-OVERVIEW
+# OVERVIEW
 
 This is an app that is made for a personal expense tracker.
 It has features including:
@@ -10,13 +10,19 @@ It has features including:
 	 	-interactable calendar
 	 	-will save previous works done in the app
 
-RELEASE NOTES
+
+
+
+# RELEASE NOTES
 
 Version 1.0.0
 	The Expense tracker no has a feature of adding expenses and viewing it. The user can view past
 	expenses because a database is implemented to save the user input.
 
-CONTAINER USAGE
+
+
+
+# CONTAINER USAGE
 
 	- Go to Windows cmd/powershell 
 	- input:
@@ -25,7 +31,9 @@ CONTAINER USAGE
 		docker run --rm -it expense-tracker-app
 		
 
-SETTING UP THE APP
+
+
+# SETTING UP THE APP
 
 Required to use the app:
 
@@ -54,13 +62,20 @@ After extracting the zip file into a folder.
 		python Code\Expense-tracker-app.py
 
 
-PYTEST
+
+
+
+# PYTEST
 
 	To run the pytest just copy paste this in the terminal:
 			python -m pytest
 
 
-BENCHMARKING AND PROFILING
+
+
+
+
+# BENCHMARKING AND PROFILING
 	
 	The tool used in the benchamrking and profiling is CProfile
 	The metric is in seconds
@@ -78,9 +93,14 @@ BENCHMARKING AND PROFILING
 		save_expense               - 1.463s
 
 	Explanation for the highest
-		the save expense is not slow on the saving part but because of the "showinfo" which is the popup that ate 1.426s out of the 1.463s which basically means that it is the wait time for the user to click ok.
+		the save expense is not slow on the saving part but because of the "showinfo" which is the popup 
+		that ate 1.426s out of the 1.463s which basically means that it is the wait time for the user to click ok.
+
+
+
+
 	
-Architecture Summary 
+# Architecture Summary 
 
 	- Class-based design which is clean and organized
 	
@@ -103,7 +123,6 @@ Architecture Summary
 	- toggle_fullscreen → behavior
 
 
-LIMITATIONS
+# LIMITATIONS
 
 	- The app doesn't have a calendar YET
-	- Most of the buttons doesn't have a feature YET
