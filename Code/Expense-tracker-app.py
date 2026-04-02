@@ -33,12 +33,10 @@ class App(Tk):
         
         # profile calls
         # self.profile_all()
-        self.profile_ui_functions()
+        
+        
+        # self.profile_ui_functions()
         self.profile_all_timed()
-
-
-
-
 
 
 
@@ -100,7 +98,8 @@ class App(Tk):
         self.save_button = ttk.Button(
             self.add_expenses_window,
             text="Save Expense",
-            command= lambda: self.profile_function(self.save_expense)
+            # command= lambda: self.profile_function(self.save_expense)
+            command= self.save_expense
         )
 
     def create_add_expenses_window(self):
@@ -133,7 +132,7 @@ class App(Tk):
             messagebox.showerror("Error", str(e))
 
     def show_view_expenses_window(self):
-        self.load_expenses()
+        # self.load_expenses()
 
         view_window = Toplevel(self)
         view_window.title("Saved Expenses")
@@ -304,8 +303,9 @@ class App(Tk):
     
     def profile_all(self):
         self.profile_function(self.load_expenses)
-        self.profile_function(self.create_add_expenses_window)
+        # self.profile_function(self.create_add_expenses_window)
         self.profile_function(self.show_view_expenses_window)
+        
     def run(self):
         self.mainloop()
 
