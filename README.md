@@ -1,6 +1,6 @@
 # Expense-tracker-app
 
-# OVERVIEW
+OVERVIEW
 
 This is an app that is made for a personal expense tracker.
 It has features including:
@@ -12,8 +12,11 @@ It has features including:
 
 
 
+__________________________________________________________________________________________________
 
-# RELEASE NOTES
+
+
+RELEASE NOTES
 
 Version 1.0.0
 	The Expense tracker no has a feature of adding expenses and viewing it. The user can view past
@@ -21,8 +24,11 @@ Version 1.0.0
 
 
 
+__________________________________________________________________________________________________
 
-# CONTAINER USAGE
+
+
+CONTAINER USAGE
 
 	- Go to Windows cmd/powershell 
 	- input:
@@ -31,9 +37,11 @@ Version 1.0.0
 		docker run --rm -it expense-tracker-app
 		
 
+__________________________________________________________________________________________________
 
 
-# SETTING UP THE APP
+
+SETTING UP THE APP
 
 Required to use the app:
 
@@ -62,23 +70,20 @@ After extracting the zip file into a folder.
 		python Code\Expense-tracker-app.py
 
 
+__________________________________________________________________________________________________
 
 
 
-# PYTEST
+PYTEST
 
 	To run the pytest just copy paste this in the terminal:
 			python -m pytest
 
 
+__________________________________________________________________________________________________
 
 
-
-
-# BENCHMARKING AND PROFILING
-	
-	The tool used in the benchamrking and profiling is CProfile
-	The metric is in seconds
+BENCHMARKING AND PROFILING
 	
 	The numbers during the profiling means
 		 necalls - is how many times a function was called
@@ -93,14 +98,18 @@ After extracting the zip file into a folder.
 		save_expense               - 1.463s
 
 	Explanation for the highest
-		the save expense is not slow on the saving part but because of the "showinfo" which is the popup 
-		that ate 1.426s out of the 1.463s which basically means that it is the wait time for the user to click ok.
+		the save expense is not slow on the saving part but because of the "showinfo" which is the popup that ate 1.426s out of 		the 1.463s which basically means that it is the wait time for the user to click ok.
+
+`	OPTIMIZATION
+		Removed one line of code from the "show_view_expenses" function and it reduced the calls from 700 to 681 overall 
+		improving the runtime of the application 
+
+
+__________________________________________________________________________________________________
 
 
 
-
-	
-# Architecture Summary 
+Architecture Summary 
 
 	- Class-based design which is clean and organized
 	
@@ -115,6 +124,8 @@ After extracting the zip file into a folder.
 	└── .github/
 	    └── workflows/
 	        └── github-actions.yml
+	
+	
 	functions:
 	
 	- __init__ → startup
@@ -123,6 +134,11 @@ After extracting the zip file into a folder.
 	- toggle_fullscreen → behavior
 
 
-# LIMITATIONS
+
+__________________________________________________________________________________________________
+
+
+
+LIMITATIONS
 
 	- The app doesn't have a calendar YET

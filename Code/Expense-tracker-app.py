@@ -132,7 +132,6 @@ class App(Tk):
             messagebox.showerror("Error", str(e))
 
     def show_view_expenses_window(self):
-        # self.load_expenses()
 
         view_window = Toplevel(self)
         view_window.title("Saved Expenses")
