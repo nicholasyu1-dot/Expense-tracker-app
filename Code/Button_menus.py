@@ -5,6 +5,8 @@ from expense_logic import validate_expense
 
 
 class Menu:
+    def __init__(self):
+        self.main_colour = "#34495e"
 
     def show_add_expenses_window(self):
         self.amount.grid(row=0, column=0, padx=20, pady=20, ipadx=10, ipady=10)
@@ -28,7 +30,7 @@ class Menu:
         )
         self.add_expenses_window.focus_force()
         self.add_expenses_window.grab_set()
-        self.add_expenses_window.configure(bg="#34495e")
+        self.add_expenses_window.configure(bg=self.main_colour)
 
         self.amount_value = StringVar()
         self.date_value = StringVar()
@@ -111,7 +113,7 @@ class Menu:
         view_window.focus_force()
         view_window.grab_set()
 
-        view_window.configure(bg="#34495e")
+        view_window.configure(bg=self.main_colour)
 
         columns = ("amount", "category", "date", "note")
         tree = ttk.Treeview(view_window, columns=columns, show="headings")
@@ -161,7 +163,7 @@ class Menu:
         monthly_window.focus_force()
         monthly_window.grab_set()
 
-        monthly_window.configure(bg="#34495e")
+        monthly_window.configure(bg=self.main_colour)
 
         columns = ( "month","amount")
         tree = ttk.Treeview(monthly_window, columns=columns, show="headings")
@@ -191,3 +193,94 @@ class Menu:
             )
         tree.pack(fill=BOTH, expand=True, padx=20, pady=20)
 
+
+
+
+    def show_settings_window(self,screen,global_style, main_colour):
+
+
+        settings_window = Toplevel(screen)
+        settings_window.title("Settings")
+        settings_window.geometry("900x500")
+
+        settings_window.focus_force()
+        settings_window.grab_set()
+
+        settings_window.configure(bg=self.main_colour)
+
+        list_of_styles = ["Red","Blue","Green"]
+        title_label = ttk.Label(settings_window,text = "SETTINGS")
+
+        label = ttk.Label(settings_window,text = "Pick a theme")
+        title_label.grid(column = 0,row = 0)
+        label.grid(column = 0,row = 1)
+
+        style_choice_buttons = []
+        index = 0
+        for style in list_of_styles:
+            print(style)
+            button = ttk.Button(settings_window,text = style,command = lambda current_style=style: self.change_style(global_style,current_style,screen,settings_window,main_colour))
+            style_choice_buttons.append(button)
+            index += 1
+
+        count = 2
+        for button1 in style_choice_buttons:
+            button1.grid(column = 0,row = count)
+            count +=1
+
+    def change_style(self,style,theme,main_screen, settings_window,main_colour):
+        s = ttk.Style()
+
+        print(theme)
+
+
+        if theme == 'Green':
+            lighter_colour = '#00b029'
+            darker_colour = '#00821e'
+            darkest_colour = '#00751b'
+
+
+        if theme == 'Red':
+            lighter_colour = '#bf2424'
+            darker_colour = '#820000'
+            darkest_colour = '#750000'
+
+
+        if theme == 'Blue':
+            lighter_colour = '#34495e'
+            darker_colour = '#29445f'
+            darkest_colour = '#2c3e50'
+        self.main_colour = lighter_colour
+
+
+        main_screen.configure(bg=darkest_colour)
+        settings_window.configure(bg=self.main_colour)
+
+        s.configure('Blue.TFrame', background=lighter_colour)
+        s.configure('Dark_blue.TFrame', background=darker_colour)
+        s.configure('Darkest_Blue.TFrame', background = darkest_colour)
+        style.configure(
+            "Title.TLabel",
+            font=("Arial", 32, "bold"),
+            foreground="#ecf0f1",
+            background= darkest_colour
+        )
+        style.configure(
+            "TLabel",
+            font=("Arial", 18, "bold"),
+            foreground="#ecf0f1",
+            background= lighter_colour
+        )
+        style.configure(
+            "TButton",
+            font=("Arial", 12),
+            padding=(15, 10),
+        )
+        style.configure(
+            "Left.TFrame",
+            background=lighter_colour
+        )
+        style.configure(
+            "Right.TFrame",
+            background=darker_colour
+        )

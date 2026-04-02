@@ -15,6 +15,11 @@ from Database.database import init_db, add_expense, get_all_expenses, table_mont
 class App(Tk):
     def __init__(self):
         super().__init__()
+        self.main_colour = "#34495e"
+
+        self.style = ttk.Style()
+        self.setup_styles()
+
         self.title("Expense-tracker")
         self.is_fullscreen = True
         self.attributes('-fullscreen', True)
@@ -22,7 +27,6 @@ class App(Tk):
 
         self.expenses = []
 
-        self.setup_styles()
         self.create_layout()
 
         init_db()
@@ -52,6 +56,7 @@ class App(Tk):
     def Monthy_expenses_helper(self):
         self.load_monthly()
         self.button_menus.create_monthly_expenses_window(self.monthly_expenses, self)
+        print(self.main_colour)
 
     def View_expenses_helper(self):
         self.load_expenses()
@@ -64,31 +69,37 @@ class App(Tk):
             self.geometry("1920x1000")
 
     def setup_styles(self):
-        style = ttk.Style()
-        style.theme_use('clam')
+        self.style.theme_use('clam')
+        s = ttk.Style()
 
-        style.configure(
+        s.configure('Blue.TFrame', background='#34495e')
+        s.configure('Dark_blue.TFrame', background="#29445f")
+        s.configure('Darkest_Blue.TFrame', background = '#2c3e50')
+
+
+
+        self.style.configure(
             "Title.TLabel",
             font=("Arial", 32, "bold"),
             foreground="#ecf0f1",
             background="#2c3e50"
         )
-        style.configure(
+        self.style.configure(
             "TLabel",
             font=("Arial", 18, "bold"),
             foreground="#ecf0f1",
             background="#34495e"
         )
-        style.configure(
+        self.style.configure(
             "TButton",
             font=("Arial", 12),
             padding=(15, 10),
         )
-        style.configure(
+        self.style.configure(
             "Left.TFrame",
             background="#2c3e50"
         )
-        style.configure(
+        self.style.configure(
             "Right.TFrame",
             background="#34495e"
         )
@@ -97,7 +108,9 @@ class App(Tk):
         self.title_label = ttk.Label(self, text="EXPENSE TRACKER", style="Title.TLabel")
         self.title_label.grid(pady=(30, 20))
 
-        self.container = Frame(self, bg="#2c3e50")
+
+        self.container = ttk.Frame(self,style = 'Darkest_Blue.TFrame')
+
 
         for i in (0, 5):
             self.container.columnconfigure(i, weight=1)
@@ -109,7 +122,7 @@ class App(Tk):
         self.create_right_frame()
 
     def create_left_frame(self):
-        self.left_frame = Frame(self.container, bg="#3a546f", width=700, height=900)
+        self.left_frame = ttk.Frame(self.container, width=700, height=900,style = 'Blue.TFrame')
         self.left_frame.columnconfigure(0, weight=1)
         self.left_frame.rowconfigure(0, weight=0)
         self.left_frame.grid(row=0, column=0, columnspan=4, padx=(0, 0), sticky="nsew")
@@ -128,14 +141,14 @@ class App(Tk):
         self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary",command=self.Monthy_expenses_helper)
         self.view_summary_btn.grid(row=2, column=0, sticky="nw", pady=10, padx=30)
 
-        self.settings_button = ttk.Button(self.left_frame, text="Settings")
+        self.settings_button = ttk.Button(self.left_frame, text="Settings",command = lambda:self.button_menus.show_settings_window(self,self.style, self.main_colour))
         self.settings_button.grid(row=3, column=0, sticky="nw", pady=10, padx=30)
 
         self.exit_btn = ttk.Button(self.left_frame, text="Exit", command=self.quit)
         self.exit_btn.grid(row=4, column=0, sticky="nw", pady=(30, 10), padx=30)
 
     def create_right_frame(self):
-        self.right_frame = Frame(self.container, bg="#29445f", width=1200)
+        self.right_frame = ttk.Frame(self.container, width=1200,style = 'Dark_blue.TFrame')
         self.right_frame.grid(row=0, column=5, padx=(0, 0), rowspan=1, sticky="nsew")
         self.right_frame.grid_propagate(False)
 
@@ -151,10 +164,9 @@ class App(Tk):
             text="Calendar is here",
             font=("Arial", 12),
             fg="#7f8c8d",
-            bg="#34495e"
+            bg=self.main_colour
         )
         self.calendar_placeholder.grid(row=1, column=1, columnspan=5, pady=300)
-
     def run(self):
         self.mainloop()
 
