@@ -94,15 +94,16 @@ BENCHMARKING AND PROFILING
 		show_add_expense_window - 0.000s
 		load_expenses           - 0.001s
 		create_add_expenses_window - 0.015s
-		show_view_expenses_window - 0.006s
+		show_view_expenses_window - 0.003s
 		save_expense               - 1.463s
 
 	Explanation for the highest
-		the save expense is not slow on the saving part but because of the "showinfo" which is the popup that ate 1.426s out of 		the 1.463s which basically means that it is the wait time for the user to click ok.
+		the save expense is not slow on the saving part but because of the "showinfo" which is the popup that ate 1.426s out of 		
+		the 1.463s which basically means that it is the wait time for the user to click ok.
 
-`	OPTIMIZATION
+	OPTIMIZATION
 		Removed one line of code from the "show_view_expenses" function and it reduced the calls from 700 to 681 overall 
-		improving the runtime of the application 
+		improving the runtime of the application. The total runtime before was 0.006 now it is at 0.003s 
 
 
 __________________________________________________________________________________________________
