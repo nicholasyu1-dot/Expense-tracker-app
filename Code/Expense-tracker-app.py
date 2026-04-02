@@ -36,7 +36,7 @@ class App(Tk):
         
         
         # self.profile_ui_functions()
-        self.profile_all_timed()
+        # self.profile_all_timed()
 
 
 
