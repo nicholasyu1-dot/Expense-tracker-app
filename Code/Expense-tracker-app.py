@@ -1,14 +1,8 @@
 from Button_menus import *
-
-
-
 import os
 import sys
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from Database.database import init_db, add_expense, get_all_expenses, table_monthly_creation
-
 
 
 class App(Tk):
@@ -35,7 +29,6 @@ class App(Tk):
         self.button_menus = Menu()
         self.border_colour = 0x00372716
         self.button_menus.change_title_bar(self,self.border_colour)
-
 
 
     def change_colours(self):

@@ -200,8 +200,6 @@ class Menu:
         tree.pack(fill=BOTH, expand=True, padx=20, pady=20)
 
 
-
-
     def show_settings_window(self,screen,global_style,border_colour):
 
 
@@ -237,8 +235,6 @@ class Menu:
 
     def change_style(self,style,theme,main_screen, settings_window,border_colour):
         s = ttk.Style()
-
-
 
         if theme == 'Green':
             darker_colour = '#477a42'
