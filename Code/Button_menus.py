@@ -1,12 +1,15 @@
-
 from tkinter import *
 from tkinter import ttk, messagebox
 from expense_logic import validate_expense
+import ctypes as ct
+
+
 
 
 class Menu:
     def __init__(self):
         self.main_colour = "#34495e"
+        self.border_colour = 0x00372716
 
     def show_add_expenses_window(self):
         self.amount.grid(row=0, column=0, padx=20, pady=20, ipadx=10, ipady=10)
@@ -21,7 +24,6 @@ class Menu:
 
         self.save_button.grid(column=0, row=4, columnspan=2, pady=20)
 
-
     def setup_add_expenses_window(self,expenses,screen):
         self.add_expenses_window = Toplevel(screen)
         self.add_expenses_window.title("Add an expense")
@@ -31,6 +33,7 @@ class Menu:
         self.add_expenses_window.focus_force()
         self.add_expenses_window.grab_set()
         self.add_expenses_window.configure(bg=self.main_colour)
+        self.change_title_bar(self.add_expenses_window, self.border_colour)
 
         self.amount_value = StringVar()
         self.date_value = StringVar()
@@ -114,6 +117,7 @@ class Menu:
         view_window.grab_set()
 
         view_window.configure(bg=self.main_colour)
+        self.change_title_bar(view_window, self.border_colour)
 
         columns = ("amount", "category", "date", "note")
         tree = ttk.Treeview(view_window, columns=columns, show="headings")
@@ -164,6 +168,8 @@ class Menu:
         monthly_window.grab_set()
 
         monthly_window.configure(bg=self.main_colour)
+        self.change_title_bar(monthly_window, self.border_colour)
+
 
         columns = ( "month","amount")
         tree = ttk.Treeview(monthly_window, columns=columns, show="headings")
@@ -196,7 +202,7 @@ class Menu:
 
 
 
-    def show_settings_window(self,screen,global_style, main_colour):
+    def show_settings_window(self,screen,global_style,border_colour):
 
 
         settings_window = Toplevel(screen)
@@ -207,6 +213,7 @@ class Menu:
         settings_window.grab_set()
 
         settings_window.configure(bg=self.main_colour)
+        self.change_title_bar(settings_window, self.border_colour)
 
         list_of_styles = ["Red","Blue","Green"]
         title_label = ttk.Label(settings_window,text = "SETTINGS")
@@ -219,7 +226,7 @@ class Menu:
         index = 0
         for style in list_of_styles:
             print(style)
-            button = ttk.Button(settings_window,text = style,command = lambda current_style=style: self.change_style(global_style,current_style,screen,settings_window,main_colour))
+            button = ttk.Button(settings_window,text = style,command = lambda current_style=style: self.change_style(global_style,current_style,screen,settings_window,border_colour))
             style_choice_buttons.append(button)
             index += 1
 
@@ -228,30 +235,36 @@ class Menu:
             button1.grid(column = 0,row = count)
             count +=1
 
-    def change_style(self,style,theme,main_screen, settings_window,main_colour):
+    def change_style(self,style,theme,main_screen, settings_window,border_colour):
         s = ttk.Style()
 
-        print(theme)
 
 
         if theme == 'Green':
-            lighter_colour = '#00b029'
-            darker_colour = '#00821e'
+            darker_colour = '#477a42'
+            lighter_colour = '#00821e'
             darkest_colour = '#00751b'
-
+            self.border_colour = 0x00125100
 
         if theme == 'Red':
-            lighter_colour = '#bf2424'
-            darker_colour = '#820000'
+            darker_colour = '#804242'
+            lighter_colour =  '#820000'
             darkest_colour = '#750000'
-
+            self.border_colour = 0x00000051
 
         if theme == 'Blue':
             lighter_colour = '#34495e'
             darker_colour = '#29445f'
             darkest_colour = '#2c3e50'
-        self.main_colour = lighter_colour
+            self.border_colour = 0x00372716
 
+        self.main_colour = lighter_colour
+        self.change_title_bar(main_screen, self.border_colour)
+        self.change_title_bar(settings_window, self.border_colour)
+
+        print(hex(self.border_colour))
+
+        border_colour = self.border_colour
 
         main_screen.configure(bg=darkest_colour)
         settings_window.configure(bg=self.main_colour)
@@ -284,3 +297,17 @@ class Menu:
             "Right.TFrame",
             background=darker_colour
         )
+
+
+    @staticmethod
+    def change_title_bar(self,hex_value):
+
+        self.update()
+
+        set_window_attribute = ct.windll.dwmapi.DwmSetWindowAttribute
+        hwnd = ct.windll.user32.GetParent(self.winfo_id())
+        rendering_policy = 35
+        value = hex_value
+        value = ct.c_int(value)
+
+        set_window_attribute(hwnd, rendering_policy, ct.byref(value), ct.sizeof(value))

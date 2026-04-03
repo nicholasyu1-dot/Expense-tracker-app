@@ -7,7 +7,6 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-
 from Database.database import init_db, add_expense, get_all_expenses, table_monthly_creation
 
 
@@ -34,6 +33,24 @@ class App(Tk):
 
         self.bind("<Escape>", self.toggle_fullscreen)
         self.button_menus = Menu()
+        self.border_colour = 0x00372716
+        self.button_menus.change_title_bar(self,self.border_colour)
+
+
+
+    def change_colours(self):
+        if self.button_menus.main_colour == '#00821e':
+            self.main_colour = '#00821e'
+            self.border_colour = 0x00125100
+
+        if self.button_menus.main_colour == '#820000':
+            self.main_colour =  '#820000'
+            self.border_colour = 0x00000051
+
+        if self.button_menus.main_colour == '#34495e':
+            self.main_colour = '#34495e'
+            self.border_colour = 0x00372716
+
 
     def load_expenses(self):
         rows = get_all_expenses()
@@ -56,18 +73,19 @@ class App(Tk):
     def Monthy_expenses_helper(self):
         self.load_monthly()
         self.button_menus.create_monthly_expenses_window(self.monthly_expenses, self)
-        print(self.main_colour)
 
     def View_expenses_helper(self):
         self.load_expenses()
         self.button_menus.create_view_expenses_window(self.expenses,self)
 
     def toggle_fullscreen(self, event=None):
+        self.change_colours()
         self.is_fullscreen = not self.is_fullscreen
         self.attributes('-fullscreen', self.is_fullscreen)
         if not self.is_fullscreen:
             self.geometry("1920x1000")
-
+        self.button_menus.change_title_bar(self, self.border_colour)
+        print(self.main_colour)
     def setup_styles(self):
         self.style.theme_use('clam')
         s = ttk.Style()
@@ -141,7 +159,7 @@ class App(Tk):
         self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary",command=self.Monthy_expenses_helper)
         self.view_summary_btn.grid(row=2, column=0, sticky="nw", pady=10, padx=30)
 
-        self.settings_button = ttk.Button(self.left_frame, text="Settings",command = lambda:self.button_menus.show_settings_window(self,self.style, self.main_colour))
+        self.settings_button = ttk.Button(self.left_frame, text="Settings",command = lambda:self.button_menus.show_settings_window(self,self.style,self.border_colour))
         self.settings_button.grid(row=3, column=0, sticky="nw", pady=10, padx=30)
 
         self.exit_btn = ttk.Button(self.left_frame, text="Exit", command=self.quit)
