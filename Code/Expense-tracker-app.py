@@ -30,6 +30,11 @@ class App(Tk):
         self.border_colour = 0x00372716
         self.button_menus.change_title_bar(self,self.border_colour)
 
+        # profile calls
+        # self.profile_all()
+
+        # self.profile_ui_functions()
+        # self.profile_all_timed()
 
     def change_colours(self):
         if self.button_menus.main_colour == '#00821e':
@@ -178,6 +183,10 @@ class App(Tk):
             bg=self.main_colour
         )
         self.calendar_placeholder.grid(row=1, column=1, columnspan=5, pady=300)
+
+
+
+
     def run(self):
         self.mainloop()
 

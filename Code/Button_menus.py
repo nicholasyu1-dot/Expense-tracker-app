@@ -2,7 +2,9 @@ from tkinter import *
 from tkinter import ttk, messagebox
 from expense_logic import validate_expense
 import ctypes as ct
-
+import cProfile
+import pstats
+import io
 
 
 
@@ -307,3 +309,39 @@ class Menu:
         value = ct.c_int(value)
 
         set_window_attribute(hwnd, rendering_policy, ct.byref(value), ct.sizeof(value))
+
+    def profile_function(self, func, *args, **kwargs):
+        print("--------------------------\n")
+        profiler = cProfile.Profile()
+        profiler.enable()
+        func(*args, **kwargs)
+        profiler.disable()
+
+        stream = io.StringIO()
+        stats = pstats.Stats(profiler, stream=stream).sort_stats("cumulative")
+        stats.print_stats(5)
+        print(f"Profiling results for {func.__name__} ")
+        print(stream.getvalue())
+        print("--------------------------\n")
+
+    def profile_ui_functions(self):
+        self.setup_add_expenses_window()
+        self.profile_function(self.show_add_expenses_window)
+        if self.add_expenses_window:
+            self.add_expenses_window.destroy()
+            self.add_expenses_window = None
+
+    def profile_all_timed(self):
+        print("--------------------------\n")
+
+        import time
+        start = time.time()
+        self.profile_all()
+        end = time.time()
+        print(f"--- Total time for all profiled functions: {end - start:.4f} seconds ---")
+        print("--------------------------\n")
+
+    def profile_all(self):
+        self.profile_function(self.load_expenses)
+        # self.profile_function(self.create_add_expenses_window)
+        self.profile_function(self.show_view_expenses_window)
