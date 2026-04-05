@@ -185,8 +185,6 @@ class App(Tk):
         self.calendar_placeholder.grid(row=1, column=1, columnspan=5, pady=300)
 
 
-
-
     def run(self):
         self.mainloop()
 

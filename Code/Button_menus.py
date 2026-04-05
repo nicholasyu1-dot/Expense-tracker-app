@@ -324,12 +324,14 @@ class Menu:
         print(stream.getvalue())
         print("--------------------------\n")
 
+
     def profile_ui_functions(self):
         self.setup_add_expenses_window()
         self.profile_function(self.show_add_expenses_window)
         if self.add_expenses_window:
             self.add_expenses_window.destroy()
             self.add_expenses_window = None
+
 
     def profile_all_timed(self):
         print("--------------------------\n")

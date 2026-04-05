@@ -88,4 +88,3 @@ def table_monthly_creation():
         print(monthly_expense)
         monthly_cost[month] = monthly_expense
     return monthly_cost
-
