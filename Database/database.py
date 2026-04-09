@@ -37,6 +37,10 @@ def add_expense(amount, category, date, note):
     conn.commit()
     conn.close()
 
+
+
+
+
 def get_expenses_by_date(date_str):
     conn = get_connection()
     cursor = conn.cursor()

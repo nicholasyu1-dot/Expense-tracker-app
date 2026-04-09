@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from tkinter import *
 from tkinter import ttk, messagebox
 from expense_logic import validate_expense
@@ -5,6 +9,7 @@ import ctypes as ct
 import cProfile
 import pstats
 import io
+from Database.database import add_expense
 
 
 
@@ -71,7 +76,7 @@ class Menu:
 
 
 
-    def save_expense(self,expenses):
+    def save_expense(self, expenses):
         try:
             amount = int(self.amount_value.get())
             category = self.selected_type.get()
@@ -80,6 +85,7 @@ class Menu:
 
             validate_expense(amount, category, date_string, note)
 
+            add_expense(amount, category, date_string, note)
 
             expense = {
                 "amount": amount,
@@ -93,10 +99,8 @@ class Menu:
             messagebox.showinfo("Success", "Expense saved successfully")
             self.add_expenses_window.destroy()
 
-
         except ValueError as e:
             messagebox.showerror("Error", "Please enter values")
-
 
 
 
