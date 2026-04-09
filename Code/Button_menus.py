@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from tkinter import *
 from tkinter import ttk, messagebox
 from expense_logic import validate_expense
@@ -5,7 +9,7 @@ import ctypes as ct
 import cProfile
 import pstats
 import io
-
+from Database.database import add_expense
 
 
 class Menu:
@@ -79,7 +83,7 @@ class Menu:
             note = self.note_value.get()
 
             validate_expense(amount, category, date_string, note)
-
+            add_expense(amount, category, date_string, note)
 
             expense = {
                 "amount": amount,
