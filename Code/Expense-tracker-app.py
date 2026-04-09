@@ -3,7 +3,7 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from Database.database import init_db, add_expense, get_all_expenses, table_monthly_creation
-from Calendar import InteractiveCalendar    
+from Calendar import CalendarView
 
 
 
@@ -29,6 +29,7 @@ class App(Tk):
 
         self.bind("<Escape>", self.toggle_fullscreen)
         self.button_menus = Menu()
+        self.button_menus.calendar_view = self.calendar_view
         self.border_colour = 0x00372716
         self.button_menus.change_title_bar(self,self.border_colour)
 
@@ -124,26 +125,24 @@ class App(Tk):
 
     def create_layout(self):
         self.title_label = ttk.Label(self, text="EXPENSE TRACKER", style="Title.TLabel")
-        self.title_label.grid(pady=(30, 20))
+        self.title_label.grid(row=0, pady=(30, 20))
 
-
-        self.container = ttk.Frame(self,style = 'Darkest_Blue.TFrame')
-
-
-        for i in (0, 5):
-            self.container.columnconfigure(i, weight=1)
-            self.container.rowconfigure(i, weight=1)
-
-        self.container.grid(padx=50, pady=(0, 30))
+        self.container = Frame(self, bg="#2c3e50")
+        self.container.grid(row=1, padx=50, pady=(0, 30), sticky="nsew")
+        
+        self.container.columnconfigure(0, weight=0, minsize=700)  # Left frame fixed width
+        self.container.columnconfigure(1, weight=1)  # Right frame expandable
+        self.container.rowconfigure(0, weight=1)
 
         self.create_left_frame()
         self.create_right_frame()
+        
+        self.rowconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
 
     def create_left_frame(self):
-        self.left_frame = ttk.Frame(self.container, width=700, height=900,style = 'Blue.TFrame')
-        self.left_frame.columnconfigure(0, weight=1)
-        self.left_frame.rowconfigure(0, weight=0)
-        self.left_frame.grid(row=0, column=0, columnspan=4, padx=(0, 0), sticky="nsew")
+        self.left_frame = Frame(self.container, bg="#34495e", width=700, height=900)
+        self.left_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 15))
         self.left_frame.grid_propagate(False)
 
         self.add_expense_btn = ttk.Button(
@@ -153,41 +152,25 @@ class App(Tk):
         )
         self.add_expense_btn.grid(row=0, column=0, sticky="nw", pady=(30, 10), padx=30)
 
-        self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses",command=self.View_expenses_helper)
+        self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses", command=self.View_expenses_helper)
         self.view_expenses_btn.grid(row=1, column=0, sticky="nw", pady=10, padx=30)
 
-        self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary",command=self.Monthy_expenses_helper)
+        self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary", command=self.Monthy_expenses_helper)
         self.view_summary_btn.grid(row=2, column=0, sticky="nw", pady=10, padx=30)
 
-        self.settings_button = ttk.Button(self.left_frame, text="Settings",command = lambda:self.button_menus.show_settings_window(self,self.style,self.border_colour))
+        self.settings_button = ttk.Button(self.left_frame, text="Settings", command=lambda: self.button_menus.show_settings_window(self, self.style, self.border_colour))
         self.settings_button.grid(row=3, column=0, sticky="nw", pady=10, padx=30)
 
         self.exit_btn = ttk.Button(self.left_frame, text="Exit", command=self.quit)
         self.exit_btn.grid(row=4, column=0, sticky="nw", pady=(30, 10), padx=30)
 
     def create_right_frame(self):
-        self.right_frame = ttk.Frame(self.container, width=1200,style = 'Dark_blue.TFrame')
-        self.right_frame.grid(row=0, column=5, padx=(0, 0), rowspan=1, sticky="nsew")
-        self.right_frame.grid_propagate(False)
+    
+        self.right_frame = Frame(self.container, bg="#29445f")
+        self.right_frame.grid(row=0, column=1, sticky="nsew")
 
-        self.calendar_label = ttk.Label(
-            self.right_frame,
-            text="CALENDAR",
-            style="Heading.TLabel"
-        )
-        self.calendar_label.grid(row=0, column=0, pady=20, padx=20, sticky="ew", columnspan=2)
-
-        # Create interactive calendar
-        self.calendar = InteractiveCalendar(
-            self.right_frame,
-            expenses=self.expenses,
-            main_colour=self.main_colour,
-            callback=lambda date: self.button_menus.show_day_expenses(date, self.expenses, self)
-        )
-        self.calendar.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
-        
-        self.right_frame.rowconfigure(1, weight=1)
-        self.right_frame.columnconfigure(0, weight=1)
+        self.calendar_view = CalendarView(self.right_frame)
+        self.calendar_view.pack(fill=BOTH, expand=True, padx=20, pady=20)
 
 
     def run(self):

@@ -37,6 +37,19 @@ def add_expense(amount, category, date, note):
     conn.commit()
     conn.close()
 
+def get_expenses_by_date(date_str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT id, amount, category, date, note
+        FROM expenses
+        WHERE date = ?
+    """, (date_str,))
+    
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
 
 def get_all_expenses():
     conn = get_connection()

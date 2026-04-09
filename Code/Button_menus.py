@@ -347,3 +347,101 @@ class Menu:
         self.profile_function(self.load_expenses)
         # self.profile_function(self.create_add_expenses_window)
         self.profile_function(self.show_view_expenses_window)
+        
+        
+    def show_day_expenses(self, date_str, all_expenses, screen, parent_frame):
+        day_expenses = [exp for exp in all_expenses if exp["date"] == date_str]
+        
+        # Remove old bottom frame if exists
+        if hasattr(self, 'bottom_frame') and self.bottom_frame:
+            self.bottom_frame.destroy()
+        
+        self.bottom_frame = Frame(parent_frame, relief=SUNKEN, borderwidth=2)
+        self.bottom_frame.pack(side=BOTTOM, fill=BOTH, expand=True, padx=5, pady=5)
+        
+        Label(self.bottom_frame, text=f"Expenses for {date_str}", font=("Arial", 12, "bold")).pack(pady=5)
+        
+        if not day_expenses:
+            Label(self.bottom_frame, text="No expenses on this day").pack(pady=10)
+        else:
+            total = 0
+            for exp in day_expenses:
+                text = f"{exp['category']} - ${exp['amount']} - {exp['note']}"
+                Label(self.bottom_frame, text=text).pack()
+                total += exp['amount']
+            
+            Label(self.bottom_frame, text=f"Total: ${total}", font=("Arial", 11, "bold")).pack(pady=10)
+            day_expenses = [exp for exp in all_expenses if exp["date"] == date_str]
+            
+            day_window = Toplevel(screen)
+            day_window.title(f"Expenses for {date_str}")
+            day_window.geometry("700x400")
+            day_window.configure(bg=self.main_colour)
+            self.change_title_bar(day_window, self.border_colour)
+            
+            Label(day_window, text=f"Expenses for {date_str}", bg=self.main_colour, fg="white", font=("Arial", 14)).pack(pady=10)
+            
+            if not day_expenses:
+                Label(day_window, text="No expenses on this day", bg=self.main_colour, fg="white").pack(pady=20)
+            else:
+                total = 0
+                for exp in day_expenses:
+                    text = f"{exp['category']} - ${exp['amount']} - {exp['note']}"
+                    Label(day_window, text=text, bg=self.main_colour, fg="white").pack(pady=5)
+                    total += exp['amount']
+                
+                Label(day_window, text=f"Total: ${total}", bg=self.main_colour, fg="yellow", font=("Arial", 12, "bold")).pack(pady=20)
+                """Show expenses for a specific day"""
+                day_expenses = [exp for exp in all_expenses if exp["date"] == date_str]
+                
+                day_window = Toplevel(screen)
+                day_window.title(f"Expenses for {date_str}")
+                day_window.geometry("800x500")
+                
+                day_window.focus_force()
+                day_window.grab_set()
+                day_window.configure(bg=self.main_colour)
+                self.change_title_bar(day_window, self.border_colour)
+                
+                # Title
+                title = ttk.Label(day_window, text=f"Expenses on {date_str}", style="Title.TLabel")
+                title.pack(pady=20)
+                
+                if not day_expenses:
+                    no_expense_label = ttk.Label(day_window, text="No expenses on this day")
+                    no_expense_label.pack(pady=20)
+                else:
+                    # Create tree view
+                    columns = ("amount", "category", "note")
+                    tree = ttk.Treeview(day_window, columns=columns, show="headings", height=10)
+                    
+                    tree.heading("amount", text="Amount")
+                    tree.heading("category", text="Category")
+                    tree.heading("note", text="Note")
+                    
+                    tree.column("amount", width=100)
+                    tree.column("category", width=150)
+                    tree.column("note", width=500)
+                    
+                    total_amount = 0
+                    for expense in day_expenses:
+                        tree.insert(
+                            "",
+                            "end",
+                            values=(
+                                f"${expense['amount']}",
+                                expense["category"],
+                                expense["note"]
+                            )
+                        )
+                        total_amount += expense["amount"]
+                    
+                    tree.pack(fill=BOTH, expand=True, padx=20, pady=10)
+                    
+                    # Total
+                    total_label = ttk.Label(
+                        day_window,
+                        text=f"Total Expenses: ${total_amount}",
+                        style="Title.TLabel"
+                    )
+                    total_label.pack(pady=10)

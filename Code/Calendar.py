@@ -1,116 +1,188 @@
-from tkinter import *
-from datetime import datetime, timedelta
-from collections import defaultdict
+from tkinter import Frame, Label, Button, Text, END
+import calendar
+from datetime import datetime
+import os
+import sys
 
-class InteractiveCalendar(Frame):
-    def __init__(self, parent, expenses=None, callback=None):
-        super().__init__(parent)
-        self.parent = parent
-        self.expenses = expenses or []
-        self.callback = callback
-        self.current_date = datetime.now()
-        
-        self.expenses_by_date = self._build_expense_map()
-        self.create_calendar_ui()
-    
-    def _build_expense_map(self):
-        expense_map = defaultdict(list)
-        for expense in self.expenses:
-            expense_map[expense["date"]].append(expense)
-        return expense_map
-    
-    def create_calendar_ui(self):
-        # Top buttons
-        top_frame = Frame(self)
-        top_frame.pack()
-        
-        Button(top_frame, text="Prev", command=self.prev_month, width=10).pack(side=LEFT)
-        self.month_label = Label(top_frame, text=self.current_date.strftime("%B %Y"), font=("Arial", 14))
-        self.month_label.pack(side=LEFT, padx=20)
-        Button(top_frame, text="Next", command=self.next_month, width=10).pack(side=LEFT)
-        
-        # Days header
-        days_frame = Frame(self)
-        days_frame.pack()
-        for day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]:
-            Label(days_frame, text=day, width=15, relief=RIDGE, borderwidth=1).pack(side=LEFT)
-        
-        # Calendar grid
-        self.calendar_frame = Frame(self)
-        self.calendar_frame.pack(fill=BOTH, expand=True)
-        
-        self.draw_calendar()
-    
-    def draw_calendar(self):
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from Database.database import get_expenses_by_date
+
+
+class CalendarView(Frame):
+    def __init__(self, parent):
+        super().__init__(parent, bg="#29445f")
+        self.configure(bg="#29445f")
+
+        today = datetime.today()
+        self.current_year = today.year
+        self.current_month = today.month
+
+        self.create_widgets()
+        self.build_calendar()
+
+    def create_widgets(self):
+        self.header_frame = Frame(self, bg="#29445f")
+        self.header_frame.pack(fill="x", pady=20)
+
+        self.prev_button = Button(
+            self.header_frame,
+            text="<",
+            font=("Arial", 14, "bold"),
+            bg="#3a546f",
+            fg="white",
+            activebackground="#5d7b99",
+            activeforeground="white",
+            relief="flat",
+            width=4,
+            command=self.previous_month
+        )
+        self.prev_button.pack(side="left", padx=(140, 10))
+
+        self.month_label = Label(
+            self.header_frame,
+            text="",
+            font=("Arial", 20, "bold"),
+            bg="#29445f",
+            fg="white"
+        )
+        self.month_label.pack(side="left", padx=20)
+
+        self.next_button = Button(
+            self.header_frame,
+            text=">",
+            font=("Arial", 14, "bold"),
+            bg="#3a546f",
+            fg="white",
+            activebackground="#5d7b99",
+            activeforeground="white",
+            relief="flat",
+            width=4,
+            command=self.next_month
+        )
+        self.next_button.pack(side="left", padx=10)
+
+        self.calendar_frame = Frame(self, bg="#29445f")
+        self.calendar_frame.pack(fill="x", padx=20, pady=10)
+
+        self.selected_date_label = Label(
+            self,
+            text="Select a date",
+            font=("Arial", 16, "bold"),
+            bg="#29445f",
+            fg="#ecf0f1"
+        )
+        self.selected_date_label.pack(pady=(25, 10))
+
+        self.expense_display = Text(
+            self,
+            height=12,
+            font=("Arial", 12),
+            bg="#3a546f",
+            fg="white",
+            relief="flat",
+            bd=0,
+            insertbackground="white"
+        )
+        self.expense_display.pack(fill="x", padx=60, pady=10)
+        self.expense_display.insert(END, "No date selected yet.")
+        self.expense_display.config(state="disabled")
+
+        self.total_label = Label(
+            self,
+            text="Total: 0",
+            font=("Arial", 14, "bold"),
+            bg="#29445f",
+            fg="#ecf0f1"
+        )
+        self.total_label.pack(pady=10)
+
+    def build_calendar(self):
         for widget in self.calendar_frame.winfo_children():
             widget.destroy()
-        
-        year = self.current_date.year
-        month = self.current_date.month
-        
-        first_day = datetime(year, month, 1)
-        first_weekday = first_day.weekday()
-        
-        if month == 12:
-            last_day = datetime(year + 1, 1, 1) - timedelta(days=1)
-        else:
-            last_day = datetime(year, month + 1, 1) - timedelta(days=1)
-        
-        num_days = last_day.day
-        
-        day_num = 1
-        for week in range(6):
-            for day_of_week in range(7):
-                if week == 0 and day_of_week < first_weekday:
-                    Label(self.calendar_frame, text="", relief=RIDGE, borderwidth=1).grid(row=week, column=day_of_week, sticky="nsew")
-                elif day_num <= num_days:
-                    date_str = f"{year}-{month:02d}-{day_num:02d}"
-                    has_expense = date_str in self.expenses_by_date
-                    
-                    text = str(day_num)
-                    if has_expense:
-                        text += "\n[*]"
-                    
+
+        for col in range(7):
+            self.calendar_frame.grid_columnconfigure(col, weight=1)
+
+        self.month_label.config(
+            text=f"{calendar.month_name[self.current_month]} {self.current_year}"
+        )
+
+        day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        for col, day_name in enumerate(day_names):
+            lbl = Label(
+                self.calendar_frame,
+                text=day_name,
+                font=("Arial", 11, "bold"),
+                bg="#29445f",
+                fg="#bdc3c7",
+                pady=8
+            )
+            lbl.grid(row=0, column=col, padx=4, pady=4, sticky="nsew")
+
+        weeks = calendar.monthcalendar(self.current_year, self.current_month)
+
+        for row_index, week in enumerate(weeks, start=1):
+            self.calendar_frame.grid_rowconfigure(row_index, weight=1)
+
+            for col_index, day in enumerate(week):
+                if day == 0:
+                    empty = Label(
+                        self.calendar_frame,
+                        text="",
+                        bg="#29445f",
+                        height=3
+                    )
+                    empty.grid(row=row_index, column=col_index, padx=4, pady=4, sticky="nsew")
+                else:
                     btn = Button(
                         self.calendar_frame,
-                        text=text,
-                        relief=RIDGE,
-                        borderwidth=1,
-                        command=lambda ds=date_str: self.on_day_click(ds)
+                        text=str(day),
+                        font=("Arial", 11, "bold"),
+                        bg="#3a546f",
+                        fg="white",
+                        activebackground="#5d7b99",
+                        activeforeground="white",
+                        relief="flat",
+                        height=3,
+                        command=lambda d=day: self.show_expenses_for_date(d)
                     )
-                    btn.grid(row=week, column=day_of_week, sticky="nsew")
-                    day_num += 1
-                else:
-                    Label(self.calendar_frame, text="", relief=RIDGE, borderwidth=1).grid(row=week, column=day_of_week, sticky="nsew")
-            
-            self.calendar_frame.rowconfigure(week, weight=1)
-        
-        for col in range(7):
-            self.calendar_frame.columnconfigure(col, weight=1)
-    
-    def on_day_click(self, date_str):
-        if self.callback:
-            self.callback(date_str)
-    
-    def prev_month(self):
-        if self.current_date.month == 1:
-            self.current_date = datetime(self.current_date.year - 1, 12, 1)
+                    btn.grid(row=row_index, column=col_index, padx=4, pady=4, sticky="nsew")
+
+    def show_expenses_for_date(self, day):
+        selected_date = f"{self.current_year:04d}-{self.current_month:02d}-{day:02d}"
+        expenses = get_expenses_by_date(selected_date)
+
+        self.selected_date_label.config(text=f"Expenses for {selected_date}")
+
+        self.expense_display.config(state="normal")
+        self.expense_display.delete("1.0", END)
+
+        total = 0
+
+        if not expenses:
+            self.expense_display.insert(END, "No expenses for this day.")
         else:
-            self.current_date = datetime(self.current_date.year, self.current_date.month - 1, 1)
-        
-        self.month_label.config(text=self.current_date.strftime("%B %Y"))
-        self.draw_calendar()
-    
+            for _, amount, category, date, note in expenses:
+                self.expense_display.insert(
+                    END,
+                    f"Amount: {amount}\nCategory: {category}\nNote: {note}\n\n"
+                )
+                total += amount
+
+        self.expense_display.config(state="disabled")
+        self.total_label.config(text=f"Total: {total}")
+
+    def previous_month(self):
+        self.current_month -= 1
+        if self.current_month == 0:
+            self.current_month = 12
+            self.current_year -= 1
+        self.build_calendar()
+
     def next_month(self):
-        if self.current_date.month == 12:
-            self.current_date = datetime(self.current_date.year + 1, 1, 1)
-        else:
-            self.current_date = datetime(self.current_date.year, self.current_date.month + 1, 1)
-        
-        self.month_label.config(text=self.current_date.strftime("%B %Y"))
-        self.draw_calendar()
-    
-    def update_expenses(self, expenses):
-        self.expenses = expenses
-        self.expenses_by_date = self._build_expense_map()
-        self.draw_calendar()
+        self.current_month += 1
+        if self.current_month == 13:
+            self.current_month = 1
+            self.current_year += 1
+        self.build_calendar()
