@@ -142,7 +142,9 @@ class App(Tk):
 
     def create_left_frame(self):
         self.left_frame = ttk.Frame(self.container, width=700, height=900,style = 'Blue.TFrame')
-        self.left_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 15))
+        self.left_frame.columnconfigure(0, weight=1)
+        self.left_frame.rowconfigure(0, weight=0)
+        self.left_frame.grid(row=0, column=0, columnspan=4, padx=(0, 0), sticky="nsew")
         self.left_frame.grid_propagate(False)
 
         self.add_expense_btn = ttk.Button(
@@ -166,7 +168,7 @@ class App(Tk):
 
     def create_right_frame(self):
     
-        self.right_frame = Frame(self.container, bg="#29445f")
+        self.right_frame = ttk.Frame(self.container, width=1200,style = 'Dark_blue.TFrame')
         self.right_frame.grid(row=0, column=1, sticky="nsew")
 
         self.calendar_view = CalendarView(self.right_frame)

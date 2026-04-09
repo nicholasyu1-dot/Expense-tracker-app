@@ -235,7 +235,7 @@ class Menu:
             button1.grid(column = 0,row = count)
             count +=1
 
-    def change_style(self,style,theme,main_screen, settings_window,border_colour):
+    def change_style(self, style, theme, main_screen, settings_window, border_colour, calendar_view=None):
         s = ttk.Style()
 
         if theme == 'Green':
@@ -246,7 +246,7 @@ class Menu:
 
         if theme == 'Red':
             darker_colour = '#804242'
-            lighter_colour =  '#820000'
+            lighter_colour = '#820000'
             darkest_colour = '#750000'
             self.border_colour = 0x00000051
 
@@ -267,20 +267,23 @@ class Menu:
         main_screen.configure(bg=darkest_colour)
         settings_window.configure(bg=self.main_colour)
 
+        if calendar_view:
+            calendar_view.rebuild_with_new_colors(darker_colour, lighter_colour, darkest_colour)
+
         s.configure('Blue.TFrame', background=lighter_colour)
         s.configure('Dark_blue.TFrame', background=darker_colour)
-        s.configure('Darkest_Blue.TFrame', background = darkest_colour)
+        s.configure('Darkest_Blue.TFrame', background=darkest_colour)
         style.configure(
             "Title.TLabel",
             font=("Arial", 32, "bold"),
             foreground="#ecf0f1",
-            background= darkest_colour
+            background=darkest_colour
         )
         style.configure(
             "TLabel",
             font=("Arial", 18, "bold"),
             foreground="#ecf0f1",
-            background= lighter_colour
+            background=lighter_colour
         )
         style.configure(
             "TButton",
@@ -295,7 +298,6 @@ class Menu:
             "Right.TFrame",
             background=darker_colour
         )
-
 
     @staticmethod
     def change_title_bar(self,hex_value):
