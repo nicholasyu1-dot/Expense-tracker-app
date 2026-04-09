@@ -3,6 +3,8 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from Database.database import init_db, add_expense, get_all_expenses, table_monthly_creation
+from Calendar import InteractiveCalendar    
+
 
 
 class App(Tk):
@@ -173,16 +175,19 @@ class App(Tk):
             text="CALENDAR",
             style="Heading.TLabel"
         )
-        self.calendar_label.grid(row=0, column=1, pady=20, padx=500, sticky="nsew", columnspan=2)
+        self.calendar_label.grid(row=0, column=0, pady=20, padx=20, sticky="ew", columnspan=2)
 
-        self.calendar_placeholder = Label(
+        # Create interactive calendar
+        self.calendar = InteractiveCalendar(
             self.right_frame,
-            text="Calendar is here",
-            font=("Arial", 12),
-            fg="#7f8c8d",
-            bg=self.main_colour
+            expenses=self.expenses,
+            main_colour=self.main_colour,
+            callback=lambda date: self.button_menus.show_day_expenses(date, self.expenses, self)
         )
-        self.calendar_placeholder.grid(row=1, column=1, columnspan=5, pady=300)
+        self.calendar.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+        
+        self.right_frame.rowconfigure(1, weight=1)
+        self.right_frame.columnconfigure(0, weight=1)
 
 
     def run(self):
