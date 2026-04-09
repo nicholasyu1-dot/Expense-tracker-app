@@ -37,19 +37,21 @@ def add_expense(amount, category, date, note):
     conn.commit()
     conn.close()
 
+
 def get_expenses_by_date(date_str):
     conn = get_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute("""
         SELECT id, amount, category, date, note
         FROM expenses
         WHERE date = ?
     """, (date_str,))
-    
+
     rows = cursor.fetchall()
     conn.close()
     return rows
+
 
 def get_all_expenses():
     conn = get_connection()
@@ -79,25 +81,23 @@ def table_monthly_creation():
     conn.commit()
     conn.close()
 
-
     rows = get_all_expenses()
     months = []
     for row in rows:
-        if row[3][0:7] not in  months:
+        if row[3][0:7] not in months:
             months.append(row[3][0:7])
     monthly_cost = {}
     print(months)
     for month in months:
-
         conn = get_connection()
         cursor = conn.cursor()
 
-        cursor.execute (f"""
+        cursor.execute(f"""
                 SELECT amount 
                 FROM expenses
                 WHERE date like '{month}%'
             """)
-        monthly_expense  = cursor.fetchall()
+        monthly_expense = cursor.fetchall()
         print(monthly_expense)
         monthly_cost[month] = monthly_expense
     return monthly_cost

@@ -3,13 +3,16 @@ import calendar
 from datetime import datetime
 import os
 import sys
-
+from tkinter import ttk
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from Database.database import get_expenses_by_date
 
 
 class CalendarView(Frame):
+
+
+
     def __init__(self, parent):
         super().__init__(parent, bg="#29445f")
         self.configure(bg="#29445f")
@@ -22,41 +25,30 @@ class CalendarView(Frame):
         self.build_calendar()
 
     def create_widgets(self):
-        self.header_frame = Frame(self, bg="#29445f")
+        self.header_frame = ttk.Frame(self, style = "Dark_blue.TFrame")
         self.header_frame.pack(fill="x", pady=20)
 
-        self.prev_button = Button(
+        self.prev_button = ttk.Button(
             self.header_frame,
             text="<",
-            font=("Arial", 14, "bold"),
-            bg="#3a546f",
-            fg="white",
-            activebackground="#5d7b99",
-            activeforeground="white",
-            relief="flat",
+
             width=4,
             command=self.previous_month
         )
         self.prev_button.pack(side="left", padx=(140, 10))
 
-        self.month_label = Label(
+        self.month_label = ttk.Label(
             self.header_frame,
             text="",
             font=("Arial", 20, "bold"),
-            bg="#29445f",
-            fg="white"
+
         )
         self.month_label.pack(side="left", padx=20)
 
-        self.next_button = Button(
+        self.next_button = ttk.Button(
             self.header_frame,
             text=">",
-            font=("Arial", 14, "bold"),
-            bg="#3a546f",
-            fg="white",
-            activebackground="#5d7b99",
-            activeforeground="white",
-            relief="flat",
+
             width=4,
             command=self.next_month
         )
@@ -65,12 +57,11 @@ class CalendarView(Frame):
         self.calendar_frame = Frame(self, bg="#29445f")
         self.calendar_frame.pack(fill="x", padx=20, pady=10)
 
-        self.selected_date_label = Label(
+        self.selected_date_label = ttk.Label(
             self,
             text="Select a date",
             font=("Arial", 16, "bold"),
-            bg="#29445f",
-            fg="#ecf0f1"
+
         )
         self.selected_date_label.pack(pady=(25, 10))
 
@@ -88,12 +79,11 @@ class CalendarView(Frame):
         self.expense_display.insert(END, "No date selected yet.")
         self.expense_display.config(state="disabled")
 
-        self.total_label = Label(
+        self.total_label = ttk.Label(
             self,
             text="Total: 0",
             font=("Arial", 14, "bold"),
-            bg="#29445f",
-            fg="#ecf0f1"
+
         )
         self.total_label.pack(pady=10)
 
@@ -186,3 +176,39 @@ class CalendarView(Frame):
             self.current_month = 1
             self.current_year += 1
         self.build_calendar()
+
+    def change_colour_cal(self, darkest_colour,lighter_colour, darker_colour):
+
+
+        self.style = ttk.Style()
+
+        self.style.configure(
+            "Title.TLabel",
+            font=("Arial", 32, "bold"),
+            foreground="#ecf0f1",
+            background= darkest_colour
+        )
+        self.style.configure(
+            "TLabel",
+            font=("Arial", 18, "bold"),
+            foreground="#ecf0f1",
+            background= lighter_colour
+        )
+        self.style.configure(
+            "TButton",
+            font=("Arial", 12,'bold'),
+            padding=(15, 10),
+            foreground="white",
+            background= 'blue'
+
+        )
+        self.style.map('TButton', background=[('active', 'blue')])
+
+        self.style.configure(
+            "Left.TFrame",
+            background=lighter_colour
+        )
+        self.style.configure(
+            "Right.TFrame",
+            background=darker_colour
+        )
