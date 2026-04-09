@@ -141,7 +141,7 @@ class App(Tk):
         self.columnconfigure(0, weight=1)
 
     def create_left_frame(self):
-        self.left_frame = Frame(self.container, bg="#34495e", width=700, height=900)
+        self.left_frame = ttk.Frame(self.container, width=700, height=900,style = 'Blue.TFrame')
         self.left_frame.grid(row=0, column=0, sticky="nsew", padx=(0, 15))
         self.left_frame.grid_propagate(False)
 
