@@ -19,8 +19,9 @@ ________________________________________________________________________________
 RELEASE NOTES
 
 Version 1.0.0
-	The Expense tracker no has a feature of adding expenses and viewing it. The user can view past
-	expenses because a database is implemented to save the user input.
+	The Expense tracker has a feature of adding expenses and viewing it. The user can view past
+	expenses because a database is implemented to save the user input. The user can also click the
+	dates in the calendar and if there is any expenses added to that day then it will display
 
 
 
@@ -127,19 +128,23 @@ Architecture Summary
 	        └── github-actions.yml
 	
 	
-	functions:
-	
-	- __init__ → startup
-	- setup_styles → appearance
-	- create_layout → structure
-	- toggle_fullscreen → behavior
 
+__________________________________________________________________________________________________
+
+
+Reflection
+
+	- In this project, we have learned all the steps on how to properly work on an app and to use github. 
+	We learned how to use a docker, profiling and benchmarking, using Tkinter for GUI, using SQLite 
+	for databes, and how to properly use github. It's also very fun to learn a TKinter while doing a project 
+	it helped us to understand it easier.
 
 
 __________________________________________________________________________________________________
 
 
+Future Plans
 
-LIMITATIONS
-
-	- The app doesn't have a calendar YET
+	- Make the UI look a bit nicer
+	- Implement color changes to the calendar via settings
+	- Add a login system
