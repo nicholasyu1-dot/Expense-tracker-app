@@ -130,8 +130,8 @@ class App(Tk):
         self.container = Frame(self, bg="#2c3e50")
         self.container.grid(row=1, padx=50, pady=(0, 30), sticky="nsew")
         
-        self.container.columnconfigure(0, weight=0, minsize=700)  # Left frame fixed width
-        self.container.columnconfigure(1, weight=1)  # Right frame expandable
+        self.container.columnconfigure(0, weight=0, minsize=700)   
+        self.container.columnconfigure(1, weight=1)   
         self.container.rowconfigure(0, weight=1)
 
         self.create_left_frame()
