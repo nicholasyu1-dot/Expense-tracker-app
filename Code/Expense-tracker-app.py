@@ -1,43 +1,53 @@
-from tkinter import *
-from tkinter import ttk, messagebox
-
+from Button_menus import *
 import os
 import sys
-import cProfile
-import pstats
-import io
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from expense_logic import validate_expense
-from Database.database import init_db, add_expense, get_all_expenses
+from Database.database import init_db, add_expense, get_all_expenses, table_monthly_creation
 
 
 class App(Tk):
     def __init__(self):
         super().__init__()
+        self.main_colour = "#34495e"
+
+        self.style = ttk.Style()
+        self.setup_styles()
+
         self.title("Expense-tracker")
         self.is_fullscreen = True
         self.attributes('-fullscreen', True)
         self.configure(bg="#2c3e50")
-        self.add_expenses_window = None
+
         self.expenses = []
+
+        self.create_layout()
 
         init_db()
         self.load_expenses()
 
-        self.setup_styles()
-        self.create_layout()
-
         self.bind("<Escape>", self.toggle_fullscreen)
-        
-        
+        self.button_menus = Menu()
+        self.border_colour = 0x00372716
+        self.button_menus.change_title_bar(self,self.border_colour)
+
         # profile calls
         # self.profile_all()
-        
-        
+
         # self.profile_ui_functions()
         # self.profile_all_timed()
 
+    def change_colours(self):
+        if self.button_menus.main_colour == '#00821e':
+            self.main_colour = '#00821e'
+            self.border_colour = 0x00125100
+
+        if self.button_menus.main_colour == '#820000':
+            self.main_colour =  '#820000'
+            self.border_colour = 0x00000051
+
+        if self.button_menus.main_colour == '#34495e':
+            self.main_colour = '#34495e'
+            self.border_colour = 0x00372716
 
 
     def load_expenses(self):
@@ -53,150 +63,59 @@ class App(Tk):
             for row in rows
         ]
 
-    def show_add_expenses_window(self):
-        self.amount.grid(row=0, column=0, padx=20, pady=20, ipadx=10, ipady=10)
-        self.date.grid(column=0, row=1, padx=20, pady=20)
-        self.type_of_expense.grid(column=0, row=2, padx=20, pady=20)
-        self.note_label.grid(column=0, row=3, padx=20, pady=20)
+    def load_monthly(self):
+        self.monthly_expenses =  table_monthly_creation()
 
-        self.amount_entry.grid(column=1, row=0, padx=20, pady=20)
-        self.date_entry.grid(column=1, row=1, padx=20, pady=20)
-        self.type_dropdown.grid(column=1, row=2, padx=20, pady=20)
-        self.note_entry.grid(column=1, row=3, padx=20, pady=20)
 
-        self.save_button.grid(column=0, row=4, columnspan=2, pady=20)
 
-    def setup_add_expenses_window(self):
-        self.add_expenses_window = Toplevel(self)
-        self.add_expenses_window.title("Add an expense")
-        self.add_expenses_window.geometry(
-            f"1000x700+{self.winfo_screenwidth() // 2 - 1000 // 2}+{self.winfo_screenheight() // 2 - 700 // 2}"
-        )
-        self.add_expenses_window.focus_force()
-        self.add_expenses_window.grab_set()
-        self.add_expenses_window.configure(bg="#34495e")
+    def Monthy_expenses_helper(self):
+        self.load_monthly()
+        self.button_menus.create_monthly_expenses_window(self.monthly_expenses, self)
 
-        self.amount_value = StringVar()
-        self.date_value = StringVar()
-        self.note_value = StringVar()
-        self.selected_type = StringVar(value="select an option")
-
-        self.amount = ttk.Label(self.add_expenses_window, text="Amount spent")
-        self.date = ttk.Label(self.add_expenses_window, text="Select a date")
-        self.type_of_expense = ttk.Label(self.add_expenses_window, text="Select a type")
-        self.note_label = ttk.Label(self.add_expenses_window, text="Note")
-
-        self.amount_entry = ttk.Entry(self.add_expenses_window, textvariable=self.amount_value)
-        self.date_entry = ttk.Entry(self.add_expenses_window, textvariable=self.date_value)
-        self.note_entry = ttk.Entry(self.add_expenses_window, textvariable=self.note_value)
-
-        self.options = ["select an option", "Food", "Clothing", "Medicine", "video games", "Custom"]
-        self.type_dropdown = ttk.OptionMenu(
-            self.add_expenses_window, self.selected_type, *self.options
-        )
-
-        self.save_button = ttk.Button(
-            self.add_expenses_window,
-            text="Save Expense",
-            # command= lambda: self.profile_function(self.save_expense)
-            command= self.save_expense
-        )
-
-    def create_add_expenses_window(self):
-        if self.add_expenses_window is not None and self.add_expenses_window.winfo_exists():
-            self.add_expenses_window.lift()
-            self.add_expenses_window.focus_force()
-            return
-
-        self.setup_add_expenses_window()
-        self.show_add_expenses_window()
-
-    def save_expense(self):
-        try:
-            amount = int(self.amount_value.get())
-            category = self.selected_type.get()
-            date_string = self.date_value.get()
-            note = self.note_value.get()
-
-            validate_expense(amount, category, date_string, note)
-
-            add_expense(amount, category, date_string, note)
-            self.load_expenses()
-
-            self.add_expenses_window.destroy()
-            self.add_expenses_window = None
-
-            messagebox.showinfo("Success", "Expense saved successfully")
-
-        except ValueError as e:
-            messagebox.showerror("Error", str(e))
-
-    def show_view_expenses_window(self):
-
-        view_window = Toplevel(self)
-        view_window.title("Saved Expenses")
-        view_window.geometry("900x500")
-        view_window.configure(bg="#34495e")
-
-        columns = ("amount", "category", "date", "note")
-        tree = ttk.Treeview(view_window, columns=columns, show="headings")
-
-        tree.heading("amount", text="Amount")
-        tree.heading("category", text="Category")
-        tree.heading("date", text="Date")
-        tree.heading("note", text="Note")
-
-        tree.column("amount", width=100)
-        tree.column("category", width=150)
-        tree.column("date", width=120)
-        tree.column("note", width=400)
-
-        for expense in self.expenses:
-            tree.insert(
-                "",
-                "end",
-                values=(
-                    expense["amount"],
-                    expense["category"],
-                    expense["date"],
-                    expense["note"]
-                )
-            )
-
-        tree.pack(fill=BOTH, expand=True, padx=20, pady=20)
+    def View_expenses_helper(self):
+        self.load_expenses()
+        self.button_menus.create_view_expenses_window(self.expenses,self)
 
     def toggle_fullscreen(self, event=None):
+        self.change_colours()
         self.is_fullscreen = not self.is_fullscreen
         self.attributes('-fullscreen', self.is_fullscreen)
         if not self.is_fullscreen:
             self.geometry("1920x1000")
-
+        self.button_menus.change_title_bar(self, self.border_colour)
+        print(self.main_colour)
     def setup_styles(self):
-        style = ttk.Style()
-        style.theme_use('clam')
+        self.style.theme_use('clam')
+        s = ttk.Style()
 
-        style.configure(
+        s.configure('Blue.TFrame', background='#34495e')
+        s.configure('Dark_blue.TFrame', background="#29445f")
+        s.configure('Darkest_Blue.TFrame', background = '#2c3e50')
+
+
+
+        self.style.configure(
             "Title.TLabel",
             font=("Arial", 32, "bold"),
             foreground="#ecf0f1",
             background="#2c3e50"
         )
-        style.configure(
+        self.style.configure(
             "TLabel",
             font=("Arial", 18, "bold"),
             foreground="#ecf0f1",
             background="#34495e"
         )
-        style.configure(
+        self.style.configure(
             "TButton",
             font=("Arial", 12),
             padding=(15, 10),
         )
-        style.configure(
+        self.style.configure(
             "Left.TFrame",
             background="#2c3e50"
         )
-        style.configure(
+        self.style.configure(
             "Right.TFrame",
             background="#34495e"
         )
@@ -205,7 +124,9 @@ class App(Tk):
         self.title_label = ttk.Label(self, text="EXPENSE TRACKER", style="Title.TLabel")
         self.title_label.grid(pady=(30, 20))
 
-        self.container = Frame(self, bg="#2c3e50")
+
+        self.container = ttk.Frame(self,style = 'Darkest_Blue.TFrame')
+
 
         for i in (0, 5):
             self.container.columnconfigure(i, weight=1)
@@ -217,7 +138,7 @@ class App(Tk):
         self.create_right_frame()
 
     def create_left_frame(self):
-        self.left_frame = Frame(self.container, bg="#3a546f", width=700, height=900)
+        self.left_frame = ttk.Frame(self.container, width=700, height=900,style = 'Blue.TFrame')
         self.left_frame.columnconfigure(0, weight=1)
         self.left_frame.rowconfigure(0, weight=0)
         self.left_frame.grid(row=0, column=0, columnspan=4, padx=(0, 0), sticky="nsew")
@@ -226,28 +147,24 @@ class App(Tk):
         self.add_expense_btn = ttk.Button(
             self.left_frame,
             text="+ Add Expense",
-            command=self.create_add_expenses_window
+            command=lambda: self.button_menus.create_add_expenses_window(self.expenses,self)
         )
         self.add_expense_btn.grid(row=0, column=0, sticky="nw", pady=(30, 10), padx=30)
 
-        self.view_expenses_btn = ttk.Button(
-            self.left_frame,
-            text="View Expenses",
-            command=self.show_view_expenses_window
-        )
+        self.view_expenses_btn = ttk.Button(self.left_frame, text="View Expenses",command=self.View_expenses_helper)
         self.view_expenses_btn.grid(row=1, column=0, sticky="nw", pady=10, padx=30)
 
-        self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary")
+        self.view_summary_btn = ttk.Button(self.left_frame, text="Monthly Summary",command=self.Monthy_expenses_helper)
         self.view_summary_btn.grid(row=2, column=0, sticky="nw", pady=10, padx=30)
 
-        self.settings_button = ttk.Button(self.left_frame, text="Settings")
+        self.settings_button = ttk.Button(self.left_frame, text="Settings",command = lambda:self.button_menus.show_settings_window(self,self.style,self.border_colour))
         self.settings_button.grid(row=3, column=0, sticky="nw", pady=10, padx=30)
 
         self.exit_btn = ttk.Button(self.left_frame, text="Exit", command=self.quit)
         self.exit_btn.grid(row=4, column=0, sticky="nw", pady=(30, 10), padx=30)
 
     def create_right_frame(self):
-        self.right_frame = Frame(self.container, bg="#29445f", width=1200)
+        self.right_frame = ttk.Frame(self.container, width=1200,style = 'Dark_blue.TFrame')
         self.right_frame.grid(row=0, column=5, padx=(0, 0), rowspan=1, sticky="nsew")
         self.right_frame.grid_propagate(False)
 
@@ -263,48 +180,11 @@ class App(Tk):
             text="Calendar is here",
             font=("Arial", 12),
             fg="#7f8c8d",
-            bg="#34495e"
+            bg=self.main_colour
         )
         self.calendar_placeholder.grid(row=1, column=1, columnspan=5, pady=300)
 
-    def profile_function(self, func, *args, **kwargs):  
-        print("--------------------------\n")
-        profiler = cProfile.Profile()
-        profiler.enable()
-        func(*args, **kwargs)
-        profiler.disable()
 
-        stream = io.StringIO()
-        stats = pstats.Stats(profiler, stream=stream).sort_stats("cumulative")
-        stats.print_stats(5)
-        print(f"Profiling results for {func.__name__} ")
-        print(stream.getvalue())
-        print("--------------------------\n")
-
-    
-    def profile_ui_functions(self):
-        self.setup_add_expenses_window()
-        self.profile_function(self.show_add_expenses_window)
-        if self.add_expenses_window:
-            self.add_expenses_window.destroy()
-            self.add_expenses_window = None
-    
-    def profile_all_timed(self):
-        print("--------------------------\n")
-
-        import time
-        start = time.time()
-        self.profile_all()
-        end = time.time()
-        print(f"--- Total time for all profiled functions: {end - start:.4f} seconds ---")
-        print("--------------------------\n")
-
-    
-    def profile_all(self):
-        self.profile_function(self.load_expenses)
-        # self.profile_function(self.create_add_expenses_window)
-        self.profile_function(self.show_view_expenses_window)
-        
     def run(self):
         self.mainloop()
 

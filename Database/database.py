@@ -10,9 +10,8 @@ def get_connection():
 
 def init_db():
     conn = get_connection()
-    cursor = conn.cursor()
 
-    cursor.execute("""
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS expenses (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             amount INTEGER NOT NULL,
@@ -52,3 +51,40 @@ def get_all_expenses():
     rows = cursor.fetchall()
     conn.close()
     return rows
+
+
+def table_monthly_creation():
+    conn = get_connection()
+
+    conn.execute('''
+            CREATE TABLE IF NOT EXISTS "Monthly Expenses" (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                amount INTEGER NOT NULL,
+                month TEXT NOT NULL
+            )
+        ''')
+    conn.commit()
+    conn.close()
+
+
+    rows = get_all_expenses()
+    months = []
+    for row in rows:
+        if row[3][0:7] not in  months:
+            months.append(row[3][0:7])
+    monthly_cost = {}
+    print(months)
+    for month in months:
+
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute (f"""
+                SELECT amount 
+                FROM expenses
+                WHERE date like '{month}%'
+            """)
+        monthly_expense  = cursor.fetchall()
+        print(monthly_expense)
+        monthly_cost[month] = monthly_expense
+    return monthly_cost
